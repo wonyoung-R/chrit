@@ -1,0 +1,273 @@
+<div class="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+  
+  <!-- Background Effects -->
+  <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20"></div>
+  <div class="absolute inset-0">
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+  </div>
+  
+  <!-- Navigation -->
+  <nav class="relative z-10 flex justify-between items-center p-8">
+    <%= link_to root_path, class: "text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent" do %>
+      Chrit
+    <% end %>
+    
+    <div class="flex items-center gap-6">
+      <% if user_signed_in? %>
+        <%= link_to "Dashboard", dashboard_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+        <%= link_to "Sign out", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+      <% else %>
+        <%= link_to "Sign in", new_user_session_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+        <%= link_to "Get Started", new_user_registration_path, class: "px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-200 text-sm" %>
+      <% end %>
+    </div>
+  </nav>
+  
+  <!-- Main Container -->
+  <div class="flex-1 relative z-10 px-8">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Pricing Header -->
+      <div class="text-center py-12">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-white">
+          Simple, Transparent Pricing
+        </h1>
+        <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-12">
+          Manage all your knowledge in one place. AI automatically summarizes and organizes for you.
+        </p>
+      </div>
+      
+      <!-- Pricing Cards -->
+      <div class="flex flex-row gap-16 max-w-full mx-auto mb-16 overflow-x-auto justify-center px-12">
+        
+        <!-- Free Plan -->
+        <div class="relative group min-w-[600px] max-w-[700px] flex-1 p-6">
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-10 h-full hover:border-gray-700 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-900/20">
+            
+            <!-- Plan Header -->
+            <div class="mb-8 text-center">
+              <h3 class="text-2xl font-bold text-white mb-3">Free</h3>
+              <p class="text-gray-400">Perfect plan to get started</p>
+            </div>
+            
+            <!-- Price -->
+            <div class="mb-8 text-center">
+              <div class="flex items-baseline gap-2 justify-center">
+                <span class="text-5xl font-bold text-white">₩0</span>
+                <span class="text-gray-400">/month</span>
+              </div>
+              <p class="text-sm text-gray-500 mt-2">10 credits on signup</p>
+            </div>
+            
+            <!-- CTA Button -->
+            <div class="flex justify-center mb-8">
+              <% if user_signed_in? %>
+                <%= link_to "Current Plan", dashboard_path, 
+                    class: "w-1/2 block text-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition duration-200 font-medium" %>
+              <% else %>
+                <%= link_to "Start for Free", new_user_registration_path, 
+                    class: "w-1/2 block text-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition duration-200 font-medium" %>
+              <% end %>
+            </div>
+            
+            <!-- Features -->
+            <div class="space-y-4">
+              <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 text-center">Includes</h4>
+              <ul class="space-y-2">
+                <!-- Feature items removed -->
+              </ul>
+            </div>
+            
+          </div>
+        </div>
+        
+        <!-- Pro Plan -->
+        <div class="relative group min-w-[600px] max-w-[700px] flex-1 p-6">
+          <div class="bg-gray-900/50 backdrop-blur-sm border-2 border-purple-500/50 rounded-2xl p-10 h-full hover:border-purple-500/70 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-900/30 relative">
+            
+            <!-- Plan Header -->
+            <div class="mb-8 text-center">
+              <h3 class="text-2xl font-bold text-white mb-3">Pro</h3>
+              <p class="text-gray-400">Powerful tools for professionals</p>
+            </div>
+            
+            <!-- Price -->
+            <div class="mb-8 text-center">
+              <div class="flex items-baseline gap-2 justify-center">
+                <span class="text-5xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">₩7,900</span>
+                <span class="text-gray-400">/month</span>
+              </div>
+              <p class="text-sm text-gray-500 mt-2">100 credits per month</p>
+            </div>
+            
+            <!-- CTA Button -->
+            <div class="flex justify-center mb-8">
+              <button class="w-1/2 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium shadow-lg shadow-purple-900/50">
+                Upgrade to Pro
+              </button>
+            </div>
+            
+            <!-- Features -->
+            <div class="space-y-4">
+              <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 text-center">Everything in Free, plus</h4>
+              <ul class="space-y-2">
+                <!-- Feature items removed -->
+              </ul>
+            </div>
+            
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Trust Signals -->
+      <div class="text-center mb-16">
+        <div class="flex items-center justify-center gap-4 md:gap-12">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-gray-400 text-sm md:text-base">SSL encrypted security</span>
+          </div>
+          <span class="text-gray-600 hidden md:inline">•</span>
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-gray-400 text-sm md:text-base">Cancel anytime</span>
+          </div>
+          <span class="text-gray-600 hidden md:inline">•</span>
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+              <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+            </svg>
+            <span class="text-gray-400 text-sm md:text-base">24/7 customer support</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Feature Comparison -->
+      <div class="mb-16">
+        <div class="bg-purple-900/10 backdrop-blur-sm rounded-3xl p-12 shadow-2xl shadow-purple-900/20 max-w-5xl mx-auto">
+          <h2 class="text-3xl font-bold text-center mb-12 text-white">
+            Detailed Feature Comparison
+          </h2>
+          
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-gray-800">
+                <th class="text-left p-6 text-gray-400 font-medium">Features</th>
+                <th class="p-6 text-center">
+                  <div class="text-white font-bold">Free</div>
+                </th>
+                <th class="p-6 text-center bg-purple-900/10">
+                  <div class="text-white font-bold">Pro</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">Monthly Credits</td>
+                <td class="p-6 text-center text-gray-400">10 (on signup)</td>
+                <td class="p-6 text-center bg-purple-900/5 text-white font-medium">100</td>
+              </tr>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">AI Summary Length</td>
+                <td class="p-6 text-center text-gray-400">200 chars</td>
+                <td class="p-6 text-center bg-purple-900/5 text-white">200 chars</td>
+              </tr>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">Search Features</td>
+                <td class="p-6 text-center text-gray-400">Basic</td>
+                <td class="p-6 text-center bg-purple-900/5 text-white font-medium">Smart Search</td>
+              </tr>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">Tags & Categories</td>
+                <td class="p-6 text-center">
+                  <span class="text-gray-600">✗</span>
+                </td>
+                <td class="p-6 text-center bg-purple-900/5">
+                  <span class="text-green-400">✓</span>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">Data Export</td>
+                <td class="p-6 text-center text-gray-400">JSON</td>
+                <td class="p-6 text-center bg-purple-900/5 text-white font-medium">JSON, CSV, PDF</td>
+              </tr>
+              <tr>
+                <td class="p-6 text-gray-300">API Access</td>
+                <td class="p-6 text-center">
+                  <span class="text-gray-600">✗</span>
+                </td>
+                <td class="p-6 text-center bg-purple-900/5">
+                  <span class="text-green-400">✓</span>
+                  <span class="text-xs text-purple-400 block mt-1">Coming Soon</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- FAQ Section -->
+      <div class="mb-16">
+        <div class="bg-purple-900/10 backdrop-blur-sm rounded-3xl p-12 shadow-2xl shadow-purple-900/20 max-w-6xl mx-auto">
+          <h2 class="text-3xl font-bold text-center mb-12 text-white">
+            Frequently Asked Questions
+          </h2>
+          
+          <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
+            <h3 class="text-white font-semibold mb-3">Can I change plans anytime?</h3>
+            <p class="text-gray-400">
+              Yes, you can upgrade or downgrade your plan anytime. Changes will apply from the next billing cycle.
+            </p>
+          </div>
+          
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
+            <h3 class="text-white font-semibold mb-3">Is my saved data secure?</h3>
+            <p class="text-gray-400">
+              All data is encrypted and securely stored, with regular backups to prevent data loss.
+            </p>
+          </div>
+          
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
+            <h3 class="text-white font-semibold mb-3">Is there a free trial?</h3>
+            <p class="text-gray-400">
+              Pro plan offers a 14-day free trial. You can start immediately without credit card information.
+            </p>
+          </div>
+          
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
+            <h3 class="text-white font-semibold mb-3">How are credits used?</h3>
+            <p class="text-gray-400">
+              One credit is used each time you save a URL and receive an AI summary. Unused credits do not roll over to the next month.
+            </p>
+          </div>
+        </div>
+        </div>
+      </div>
+      
+      <!-- Bottom CTA -->
+      <div class="text-center pb-16">
+        <h2 class="text-3xl font-bold mb-4 text-white">
+          Ready to Get Started?
+        </h2>
+        <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
+          Start now to efficiently manage all your knowledge. You can upgrade anytime.
+        </p>
+        <% if !user_signed_in? %>
+          <%= link_to "무료로 시작하기", new_user_registration_path, 
+              class: "inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium text-lg shadow-lg shadow-purple-900/50" %>
+        <% end %>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
