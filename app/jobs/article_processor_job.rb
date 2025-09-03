@@ -1,8 +1,13 @@
+require_relative 'content_validator'
+require_relative 'processing_logger'
+
 class ArticleProcessorJob < ApplicationJob
+  include ContentValidator
+  include ProcessingLogger
   queue_as :default
   
-  # 재시도 설정
-  retry_on StandardError, wait: :exponentially_longer, attempts: 3 do |job, error|
+  # 재시도 설정 - 5초 간격으로 재시도
+  retry_on StandardError, wait: 5.seconds, attempts: 3 do |job, error|
     knowledge = job.arguments.first
     knowledge.update(
       status: "failed",
@@ -128,8 +133,17 @@ class ArticleProcessorJob < ApplicationJob
       published_at: extract_published_date(article_data[:metadata]),
       status: "completed",
       completed_at: Time.current,
-      error_message: nil
+      error_message: nil,
+      # 토큰 정보 저장
+      input_tokens: ai_result[:input_tokens] || 0,
+      output_tokens: ai_result[:output_tokens] || 0
     )
+    
+    # 크레딧 계산 및 차감
+    if knowledge.user
+      credits_used = knowledge.user.use_credit!(knowledge)
+      Rails.logger.info "Article processing used #{credits_used} credits (#{knowledge.input_tokens} input, #{knowledge.output_tokens} output tokens)"
+    end
   end
   
   def extract_metadata_keywords(metadata)

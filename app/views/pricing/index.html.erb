@@ -7,21 +7,27 @@
     <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
   </div>
   
-  <!-- Navigation -->
+  <!-- Navigation Bar -->
   <nav class="relative z-10 flex justify-between items-center p-8">
     <%= link_to root_path, class: "text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent" do %>
       Chrit
     <% end %>
-    
-    <div class="flex items-center gap-6">
-      <% if user_signed_in? %>
-        <%= link_to "Dashboard", dashboard_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
-        <%= link_to "Sign out", destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
-      <% else %>
-        <%= link_to "Sign in", new_user_session_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
-        <%= link_to "Get Started", new_user_registration_path, class: "px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-200 text-sm" %>
-      <% end %>
-    </div>
+    <% if user_signed_in? %>
+      <div class="flex items-center gap-6">
+        <%= link_to "대시보드", dashboard_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+        <%= link_to "가격", pricing_path, class: "text-sm text-purple-400 hover:text-purple-300 transition duration-200 font-medium" %>
+        <% if current_user.admin? %>
+          <%= link_to "관리자", admin_dashboard_path, class: "text-sm text-purple-400 hover:text-purple-300 transition duration-200" %>
+        <% end %>
+        <%= link_to "로그아웃", destroy_user_session_path, class: "px-4 py-2 text-sm bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-200", data: { turbo_method: :delete } %>
+      </div>
+    <% else %>
+      <div class="flex items-center gap-4">
+        <%= link_to "가격", pricing_path, class: "text-sm text-purple-400 hover:text-purple-300 transition duration-200 font-medium" %>
+        <%= link_to "로그인", new_user_session_path, class: "px-4 py-2 text-sm text-white hover:text-gray-300 transition duration-200" %>
+        <%= link_to "시작하기", new_user_registration_path, class: "px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-200" %>
+      </div>
+    <% end %>
   </nav>
   
   <!-- Main Container -->
@@ -30,183 +36,236 @@
       
       <!-- Pricing Header -->
       <div class="text-center py-12">
-        <h1 class="text-5xl md:text-6xl font-bold mb-6 text-white">
-          Simple, Transparent Pricing
+        <h1 class="text-5xl font-bold mb-6 text-white">
+          간단하고 투명한 가격
         </h1>
-        <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-12">
-          Manage all your knowledge in one place. AI automatically summarizes and organizes for you.
+        <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+          모든 지식을 한 곳에서 관리하세요. AI가 자동으로 요약하고 정리해드립니다.
         </p>
       </div>
       
-      <!-- Pricing Cards -->
-      <div class="flex flex-row gap-16 max-w-full mx-auto mb-16 overflow-x-auto justify-center px-12">
+      <!-- Pricing Cards - Horizontal Layout -->
+      <div class="flex justify-center gap-8 mb-16">
         
         <!-- Free Plan -->
-        <div class="relative group min-w-[600px] max-w-[700px] flex-1 p-6">
-          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-10 h-full hover:border-gray-700 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-900/20">
-            
-            <!-- Plan Header -->
-            <div class="mb-8 text-center">
-              <h3 class="text-2xl font-bold text-white mb-3">Free</h3>
-              <p class="text-gray-400">Perfect plan to get started</p>
-            </div>
-            
-            <!-- Price -->
-            <div class="mb-8 text-center">
-              <div class="flex items-baseline gap-2 justify-center">
-                <span class="text-5xl font-bold text-white">₩0</span>
-                <span class="text-gray-400">/month</span>
-              </div>
-              <p class="text-sm text-gray-500 mt-2">10 credits on signup</p>
-            </div>
-            
-            <!-- CTA Button -->
-            <div class="flex justify-center mb-8">
-              <% if user_signed_in? %>
-                <%= link_to "Current Plan", dashboard_path, 
-                    class: "w-1/2 block text-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition duration-200 font-medium" %>
-              <% else %>
-                <%= link_to "Start for Free", new_user_registration_path, 
-                    class: "w-1/2 block text-center px-6 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition duration-200 font-medium" %>
-              <% end %>
-            </div>
-            
-            <!-- Features -->
-            <div class="space-y-4">
-              <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 text-center">Includes</h4>
-              <ul class="space-y-2">
-                <!-- Feature items removed -->
-              </ul>
-            </div>
-            
+        <div class="w-96 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 hover:border-gray-700 transition-all duration-300">
+          
+          <!-- Plan Header -->
+          <div class="text-center mb-6">
+            <h3 class="text-2xl font-bold text-white mb-2">무료</h3>
+            <p class="text-gray-400">시작하기에 완벽한 플랜</p>
           </div>
+          
+          <!-- Price -->
+          <div class="text-center mb-8">
+            <div class="flex items-baseline gap-2 justify-center">
+              <span class="text-5xl font-bold text-white">₩0</span>
+              <span class="text-gray-400">/월</span>
+            </div>
+            <p class="text-sm text-gray-500 mt-2">가입 시 10 크레딧</p>
+          </div>
+          
+          <!-- Features -->
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-gray-300">월 10 크레딧</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-gray-300">AI 자동 요약</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-gray-300">기본 검색 기능</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-gray-300">JSON 내보내기</span>
+            </li>
+          </ul>
+          
+          <!-- CTA Button -->
+          <% if user_signed_in? %>
+            <%= link_to "현재 플랜", dashboard_path, 
+                class: "w-full block text-center px-6 py-3 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition duration-200 font-medium" %>
+          <% else %>
+            <%= link_to "무료로 시작", new_user_registration_path, 
+                class: "w-full block text-center px-6 py-3 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition duration-200 font-medium" %>
+          <% end %>
         </div>
         
         <!-- Pro Plan -->
-        <div class="relative group min-w-[600px] max-w-[700px] flex-1 p-6">
-          <div class="bg-gray-900/50 backdrop-blur-sm border-2 border-purple-500/50 rounded-2xl p-10 h-full hover:border-purple-500/70 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-900/30 relative">
-            
-            <!-- Plan Header -->
-            <div class="mb-8 text-center">
-              <h3 class="text-2xl font-bold text-white mb-3">Pro</h3>
-              <p class="text-gray-400">Powerful tools for professionals</p>
-            </div>
-            
-            <!-- Price -->
-            <div class="mb-8 text-center">
-              <div class="flex items-baseline gap-2 justify-center">
-                <span class="text-5xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">₩7,900</span>
-                <span class="text-gray-400">/month</span>
-              </div>
-              <p class="text-sm text-gray-500 mt-2">100 credits per month</p>
-            </div>
-            
-            <!-- CTA Button -->
-            <div class="flex justify-center mb-8">
-              <button class="w-1/2 px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium shadow-lg shadow-purple-900/50">
-                Upgrade to Pro
-              </button>
-            </div>
-            
-            <!-- Features -->
-            <div class="space-y-4">
-              <h4 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 text-center">Everything in Free, plus</h4>
-              <ul class="space-y-2">
-                <!-- Feature items removed -->
-              </ul>
-            </div>
-            
+        <div class="w-96 bg-gray-900/50 backdrop-blur-sm border-2 border-purple-500/50 rounded-2xl p-8 hover:border-purple-500/70 transition-all duration-300 relative">
+          
+          <!-- Popular Badge -->
+          <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+            <span class="bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full">
+              인기
+            </span>
           </div>
+          
+          <!-- Plan Header -->
+          <div class="text-center mb-6">
+            <h3 class="text-2xl font-bold text-white mb-2">프로</h3>
+            <p class="text-gray-400">전문가를 위한 강력한 도구</p>
+          </div>
+          
+          <!-- Price -->
+          <div class="text-center mb-8">
+            <div class="flex items-baseline gap-2 justify-center">
+              <span class="text-5xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">₩7,900</span>
+              <span class="text-gray-400">/월</span>
+            </div>
+            <p class="text-sm text-gray-500 mt-2">월 100 크레딧</p>
+          </div>
+          
+          <!-- Features -->
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-white font-medium">월 100 크레딧</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-white font-medium">스마트 검색</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-white font-medium">태그 & 카테고리</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-white font-medium">다양한 내보내기 형식</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="text-white font-medium">API 접근 (곧 출시)</span>
+            </li>
+          </ul>
+          
+          <!-- CTA Button -->
+          <button class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium shadow-lg">
+            프로로 업그레이드
+          </button>
         </div>
         
       </div>
       
-      <!-- Trust Signals -->
-      <div class="text-center mb-16">
-        <div class="flex items-center justify-center gap-4 md:gap-12">
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            <span class="text-gray-400 text-sm md:text-base">SSL encrypted security</span>
-          </div>
-          <span class="text-gray-600 hidden md:inline">•</span>
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
-            </svg>
-            <span class="text-gray-400 text-sm md:text-base">Cancel anytime</span>
-          </div>
-          <span class="text-gray-600 hidden md:inline">•</span>
-          <div class="flex items-center gap-2">
-            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
-              <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
-            </svg>
-            <span class="text-gray-400 text-sm md:text-base">24/7 customer support</span>
-          </div>
+      <!-- Trust Signals - Horizontal Layout -->
+      <div class="flex justify-center gap-12 mb-16">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-gray-300">SSL 암호화 보안</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-gray-300">언제든 취소 가능</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+          </svg>
+          <span class="text-gray-300">24/7 고객 지원</span>
         </div>
       </div>
       
-      <!-- Feature Comparison -->
+      <!-- Feature Comparison Table -->
       <div class="mb-16">
-        <div class="bg-purple-900/10 backdrop-blur-sm rounded-3xl p-12 shadow-2xl shadow-purple-900/20 max-w-5xl mx-auto">
-          <h2 class="text-3xl font-bold text-center mb-12 text-white">
-            Detailed Feature Comparison
-          </h2>
-          
-          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden">
+        <h2 class="text-3xl font-bold text-center mb-12 text-white">
+          상세 기능 비교
+        </h2>
+        
+        <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden max-w-4xl mx-auto">
           <table class="w-full">
             <thead>
-              <tr class="border-b border-gray-800">
-                <th class="text-left p-6 text-gray-400 font-medium">Features</th>
+              <tr class="border-b border-gray-800 bg-gray-900/50">
+                <th class="text-left p-6 text-gray-400 font-medium">기능</th>
                 <th class="p-6 text-center">
-                  <div class="text-white font-bold">Free</div>
+                  <div class="text-white font-bold">무료</div>
                 </th>
                 <th class="p-6 text-center bg-purple-900/10">
-                  <div class="text-white font-bold">Pro</div>
+                  <div class="text-white font-bold">프로</div>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr class="border-b border-gray-800/50">
-                <td class="p-6 text-gray-300">Monthly Credits</td>
-                <td class="p-6 text-center text-gray-400">10 (on signup)</td>
+                <td class="p-6 text-gray-300">월 크레딧</td>
+                <td class="p-6 text-center text-gray-400">10</td>
                 <td class="p-6 text-center bg-purple-900/5 text-white font-medium">100</td>
               </tr>
               <tr class="border-b border-gray-800/50">
-                <td class="p-6 text-gray-300">AI Summary Length</td>
-                <td class="p-6 text-center text-gray-400">200 chars</td>
-                <td class="p-6 text-center bg-purple-900/5 text-white">200 chars</td>
-              </tr>
-              <tr class="border-b border-gray-800/50">
-                <td class="p-6 text-gray-300">Search Features</td>
-                <td class="p-6 text-center text-gray-400">Basic</td>
-                <td class="p-6 text-center bg-purple-900/5 text-white font-medium">Smart Search</td>
-              </tr>
-              <tr class="border-b border-gray-800/50">
-                <td class="p-6 text-gray-300">Tags & Categories</td>
+                <td class="p-6 text-gray-300">AI 요약</td>
                 <td class="p-6 text-center">
-                  <span class="text-gray-600">✗</span>
+                  <span class="text-green-400">✓</span>
                 </td>
                 <td class="p-6 text-center bg-purple-900/5">
                   <span class="text-green-400">✓</span>
                 </td>
               </tr>
               <tr class="border-b border-gray-800/50">
-                <td class="p-6 text-gray-300">Data Export</td>
+                <td class="p-6 text-gray-300">검색 기능</td>
+                <td class="p-6 text-center text-gray-400">기본</td>
+                <td class="p-6 text-center bg-purple-900/5 text-white font-medium">스마트 검색</td>
+              </tr>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">태그 & 카테고리</td>
+                <td class="p-6 text-center">
+                  <span class="text-red-400">✗</span>
+                </td>
+                <td class="p-6 text-center bg-purple-900/5">
+                  <span class="text-green-400">✓</span>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">데이터 내보내기</td>
                 <td class="p-6 text-center text-gray-400">JSON</td>
                 <td class="p-6 text-center bg-purple-900/5 text-white font-medium">JSON, CSV, PDF</td>
               </tr>
-              <tr>
-                <td class="p-6 text-gray-300">API Access</td>
+              <tr class="border-b border-gray-800/50">
+                <td class="p-6 text-gray-300">API 접근</td>
                 <td class="p-6 text-center">
-                  <span class="text-gray-600">✗</span>
+                  <span class="text-red-400">✗</span>
                 </td>
                 <td class="p-6 text-center bg-purple-900/5">
                   <span class="text-green-400">✓</span>
-                  <span class="text-xs text-purple-400 block mt-1">Coming Soon</span>
+                  <span class="text-xs text-purple-400 block mt-1">곧 출시</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-6 text-gray-300">우선 지원</td>
+                <td class="p-6 text-center">
+                  <span class="text-red-400">✗</span>
+                </td>
+                <td class="p-6 text-center bg-purple-900/5">
+                  <span class="text-green-400">✓</span>
                 </td>
               </tr>
             </tbody>
@@ -216,54 +275,52 @@
       
       <!-- FAQ Section -->
       <div class="mb-16">
-        <div class="bg-purple-900/10 backdrop-blur-sm rounded-3xl p-12 shadow-2xl shadow-purple-900/20 max-w-6xl mx-auto">
-          <h2 class="text-3xl font-bold text-center mb-12 text-white">
-            Frequently Asked Questions
-          </h2>
-          
-          <div class="grid md:grid-cols-2 gap-6">
-          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
-            <h3 class="text-white font-semibold mb-3">Can I change plans anytime?</h3>
-            <p class="text-gray-400">
-              Yes, you can upgrade or downgrade your plan anytime. Changes will apply from the next billing cycle.
+        <h2 class="text-3xl font-bold text-center mb-12 text-white">
+          자주 묻는 질문
+        </h2>
+        
+        <div class="grid grid-cols-2 gap-6 max-w-5xl mx-auto">
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+            <h3 class="text-white font-semibold mb-3">언제든 플랜을 변경할 수 있나요?</h3>
+            <p class="text-gray-400 text-sm">
+              네, 언제든 플랜을 업그레이드하거나 다운그레이드할 수 있습니다. 변경 사항은 다음 결제 주기부터 적용됩니다.
             </p>
           </div>
           
-          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
-            <h3 class="text-white font-semibold mb-3">Is my saved data secure?</h3>
-            <p class="text-gray-400">
-              All data is encrypted and securely stored, with regular backups to prevent data loss.
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+            <h3 class="text-white font-semibold mb-3">저장된 데이터는 안전한가요?</h3>
+            <p class="text-gray-400 text-sm">
+              모든 데이터는 암호화되어 안전하게 저장되며, 데이터 손실을 방지하기 위해 정기적으로 백업됩니다.
             </p>
           </div>
           
-          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
-            <h3 class="text-white font-semibold mb-3">Is there a free trial?</h3>
-            <p class="text-gray-400">
-              Pro plan offers a 14-day free trial. You can start immediately without credit card information.
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+            <h3 class="text-white font-semibold mb-3">무료 체험이 있나요?</h3>
+            <p class="text-gray-400 text-sm">
+              프로 플랜은 14일 무료 체험을 제공합니다. 신용카드 정보 없이 바로 시작할 수 있습니다.
             </p>
           </div>
           
-          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition duration-300">
-            <h3 class="text-white font-semibold mb-3">How are credits used?</h3>
-            <p class="text-gray-400">
-              One credit is used each time you save a URL and receive an AI summary. Unused credits do not roll over to the next month.
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+            <h3 class="text-white font-semibold mb-3">크레딧은 어떻게 사용되나요?</h3>
+            <p class="text-gray-400 text-sm">
+              URL을 저장하고 AI 요약을 받을 때마다 크레딧이 사용됩니다. 사용하지 않은 크레딧은 다음 달로 이월되지 않습니다.
             </p>
           </div>
-        </div>
         </div>
       </div>
       
       <!-- Bottom CTA -->
       <div class="text-center pb-16">
         <h2 class="text-3xl font-bold mb-4 text-white">
-          Ready to Get Started?
+          시작할 준비가 되셨나요?
         </h2>
         <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
-          Start now to efficiently manage all your knowledge. You can upgrade anytime.
+          지금 시작해서 모든 지식을 효율적으로 관리하세요. 언제든 업그레이드할 수 있습니다.
         </p>
         <% if !user_signed_in? %>
           <%= link_to "무료로 시작하기", new_user_registration_path, 
-              class: "inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium text-lg shadow-lg shadow-purple-900/50" %>
+              class: "inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium text-lg shadow-lg" %>
         <% end %>
       </div>
       

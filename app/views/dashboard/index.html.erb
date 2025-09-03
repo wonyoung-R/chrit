@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+<div class="min-h-screen bg-black text-white flex flex-col relative overflow-hidden" data-turbo-permanent>
   
   <!-- Background Effects -->
   <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20"></div>
@@ -12,288 +12,302 @@
     <%= link_to root_path, class: "text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent" do %>
       Chrit
     <% end %>
-    <div>
-      <% if user_signed_in? %>
-        <div class="flex items-center gap-6">
-          <%= link_to "Pricing", pricing_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
-          <span class="text-sm text-gray-400"><%= current_user.email %></span>
-          <%= link_to "Sign out", destroy_user_session_path,
-              class: "text-sm text-gray-400 hover:text-white transition duration-200",
-              data: { turbo_method: :delete } %>
-        </div>
-      <% else %>
-        <div class="flex gap-4">
-          <%= link_to "Pricing", pricing_path, class: "px-4 py-2 text-sm text-gray-400 hover:text-white transition duration-200" %>
-          <%= link_to "Sign in", new_user_session_path,
-              class: "px-4 py-2 text-sm text-white hover:text-gray-300 transition duration-200" %>
-          <%= link_to "Get Started", new_user_registration_path,
-              class: "px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-200" %>
-        </div>
+    <div class="flex items-center gap-6">
+      <%= link_to "대시보드", dashboard_path, class: "text-sm text-purple-400 hover:text-purple-300 transition duration-200 font-medium" %>
+      <%= link_to "가격", pricing_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+      <% if current_user.admin? %>
+        <%= link_to "관리자", admin_dashboard_path, class: "text-sm text-purple-400 hover:text-purple-300 transition duration-200" %>
       <% end %>
+      <%= link_to "로그아웃", destroy_user_session_path, class: "px-4 py-2 text-sm bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-200", data: { turbo_method: :delete } %>
     </div>
   </nav>
   
   <!-- Main Content -->
-  <div class="flex-1 relative z-10">
-    <div class="max-w-7xl mx-auto px-8">
-      
-      <!-- Dashboard Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-          Dashboard
-        </h1>
-        <p class="text-gray-400 mt-2">Manage and explore your saved knowledge</p>
+  <div class="flex-1 relative z-10 px-8">
+    <% if user_signed_in? %>
+      <!-- URL Input Section -->
+      <div class="mb-6">
+        <%= form_with url: knowledges_path,
+                      data: { 
+                        turbo: true, 
+                        controller: "url-input",
+                        action: "submit->url-input#handleSubmit",
+                        url_input_target: "form"
+                      },
+                      class: "w-full" do |f| %>
+          <div class="relative group">
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition duration-300"></div>
+            <%= f.text_field :url,
+                placeholder: "YouTube 또는 웹 기사 URL을 붙여넣으세요",
+                class: "relative w-full px-6 py-4 text-base bg-gray-900/90 backdrop-blur-sm border border-gray-800 rounded-2xl
+                        text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50
+                        transition-all duration-300",
+                data: { 
+                  action: "paste->url-input#handlePaste input->url-input#handleInput",
+                  url_input_target: "input"
+                },
+                autocomplete: "off",
+                autofocus: true %>
+            <div class="absolute right-3 top-1/2 -translate-y-1/2">
+              <%= f.submit "저장",
+                  class: "px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl
+                          hover:from-purple-700 hover:to-blue-700 transition duration-200 cursor-pointer font-medium",
+                  data: { url_input_target: "submitButton" } %>
+            </div>
+          </div>
+          <div id="form-errors" class="mt-2"></div>
+          <div data-url-input-target="statusMessage"></div>
+        <% end %>
       </div>
       
-      <% if user_signed_in? %>
-        <!-- Main Layout Container -->
-        <div class="flex gap-6">
+      <!-- Dashboard Layout with Sidebar -->
+      <div class="flex gap-6 h-full">
+        
+        <!-- Left Sidebar - 25% -->
+        <div class="w-1/4 space-y-6">
           
-          <!-- Left Column - Stats & Search -->
-          <div class="w-80 flex-shrink-0">
+          <!-- 통계 Section -->
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+            <h2 class="text-lg font-semibold text-white mb-4">통계</h2>
             
-            <!-- Stats Card -->
-            <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 mb-6 shadow-sm">
-              <h2 class="text-lg font-semibold text-white mb-4">Statistics</h2>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-400 text-sm">전체 저장</span>
+                <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                  <%= @total_knowledges %>
+                </span>
+              </div>
               
-              <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-400 text-sm">YouTube</span>
+                <span class="text-xl font-bold text-white">
+                  <%= @youtube_count %>
+                </span>
+              </div>
+              
+              <div class="flex justify-between items-center">
+                <span class="text-gray-400 text-sm">기사</span>
+                <span class="text-xl font-bold text-white">
+                  <%= @article_count %>
+                </span>
+              </div>
+              
+              <div class="border-t border-gray-800 pt-4">
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-400 text-sm">Total Saved</span>
-                  <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                    <%= @total_knowledges %>
+                  <span class="text-gray-400 text-sm">이번 달</span>
+                  <span class="text-xl font-bold text-green-400">
+                    <%= @this_month_count %>
                   </span>
-                </div>
-                
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-400 text-sm">YouTube</span>
-                  <span class="text-xl font-bold text-white">
-                    <%= @youtube_count %>
-                  </span>
-                </div>
-                
-                <div class="flex justify-between items-center">
-                  <span class="text-gray-400 text-sm">Articles</span>
-                  <span class="text-xl font-bold text-white">
-                    <%= @article_count %>
-                  </span>
-                </div>
-                
-                <div class="border-t border-gray-800 pt-4">
-                  <div class="flex justify-between items-center">
-                    <span class="text-gray-400 text-sm">This Month</span>
-                    <span class="text-xl font-bold text-green-400">
-                      <%= @this_month_count %>
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
-            
-            <!-- Quick Search -->
-            <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 shadow-sm">
-              <h2 class="text-lg font-semibold text-white mb-6 text-center">Quick Search</h2>
-              
-              <div class="space-y-3">
-                <input type="text" 
-                       id="search-input"
-                       placeholder="Enter search term..." 
-                       class="w-full px-8 py-4 mb-3 text-base bg-gray-900/90 backdrop-blur-sm border border-gray-800 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50 transition-all duration-300">
-                <button class="w-full inline-flex items-center justify-center h-12 px-12 mb-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-base font-medium transition-all duration-200 shadow-sm hover:from-purple-700 hover:to-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50">
-                  Search
-                </button>
-              </div>
-              
-              <!-- Type Filter Tags -->
-              <div class="mb-5 mt-5">
-                <div class="text-sm text-gray-400 mb-4 text-center">Content Type</div>
-                <div class="flex flex-wrap gap-2 justify-center mb-6" id="content-type-buttons">
-                  <button data-type="all" class="content-type-btn inline-flex items-center justify-center h-10 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:from-purple-700 hover:to-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 active">
-                    ALL
-                  </button>
-                  <button data-type="youtube" class="content-type-btn inline-flex items-center justify-center h-10 px-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 text-gray-400 rounded-full text-sm font-medium hover:bg-gray-800/70 hover:text-white hover:border-gray-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                    YouTube
-                  </button>
-                  <button data-type="thread" class="content-type-btn inline-flex items-center justify-center h-10 px-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 text-gray-400 rounded-full text-sm font-medium hover:bg-gray-800/70 hover:text-white hover:border-gray-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                    Thread
-                  </button>
-                  <button data-type="article" class="content-type-btn inline-flex items-center justify-center h-10 px-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 text-gray-400 rounded-full text-sm font-medium hover:bg-gray-800/70 hover:text-white hover:border-gray-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                    Article
-                  </button>
-                </div>
-              </div>
-              
-              <!-- Popular Tags -->
-              <div class="space-y-4 mt-5">
-                <div class="text-sm text-gray-400 text-center">Popular Tags</div>
-                <div class="flex flex-wrap gap-1 justify-center">
-                  <% if @popular_tags && @popular_tags.any? %>
-                    <% @popular_tags.each do |tag| %>
-                      <span class="text-xs text-white/80 hover:text-white cursor-pointer transition-all duration-200">
-                        #<%= tag.name %>
-                      </span>
-                    <% end %>
-                  <% else %>
-                    <span class="text-xs text-white/80 hover:text-white cursor-pointer transition-all duration-200">
-                      #politics
-                    </span>
-                    <span class="text-xs text-white/80 hover:text-white cursor-pointer transition-all duration-200">
-                      #technology
-                    </span>
-                    <span class="text-xs text-white/80 hover:text-white cursor-pointer transition-all duration-200">
-                      #economy
-                    </span>
-                    <span class="text-xs text-white/80 hover:text-white cursor-pointer transition-all duration-200">
-                      #society
-                    </span>
-                    <span class="text-xs text-white/80 hover:text-white cursor-pointer transition-all duration-200">
-                      #culture
-                    </span>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-            
           </div>
           
-          <!-- Right Column - Knowledge List -->
-          <div class="flex-1">
+          <!-- 계정 상태 Section -->
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+            <h2 class="text-lg font-semibold text-white mb-4">계정 상태</h2>
             
-            <!-- List Header -->
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-lg font-semibold text-white">Saved Knowledge</h2>
-              <div class="flex gap-2">
-                <button class="inline-flex items-center justify-center h-8 px-3 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                  Latest
-                </button>
-                <button class="inline-flex items-center justify-center h-8 px-3 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                  Oldest
-                </button>
-                <button class="inline-flex items-center justify-center h-8 px-3 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                  Popular
-                </button>
+            <div class="space-y-4">
+              <div>
+                <span class="text-gray-400 text-sm">이메일</span>
+                <p class="text-white text-sm mt-1 truncate" title="<%= current_user.email %>">
+                  <%= current_user.email %>
+                </p>
               </div>
-            </div>
-            
-            <!-- Knowledge Grid -->
-            <div class="grid gap-4">
-              <% if @recent_knowledges.any? %>
-                <%= turbo_frame_tag "knowledges" do %>
-                  <% @recent_knowledges.each do |knowledge| %>
-                    <%= link_to knowledge_path(knowledge),
-                        class: "bg-gray-900/30 backdrop-blur-sm border border-gray-800 rounded-xl p-6 shadow-sm
-                               hover:bg-gray-900/50 hover:border-purple-500/30 transition-all duration-200 block",
-                        data: { turbo_frame: "_top" } do %>
-                      
-                      <div class="flex items-start justify-between">
-                        <!-- Content -->
-                        <div class="flex-1 min-w-0">
-                          <div class="flex items-center gap-3 mb-2">
-                            <!-- Type Badge -->
-                            <% if knowledge.content_type == 'youtube' %>
-                              <span class="content-type-badge inline-flex items-center justify-center h-8 px-4 backdrop-blur-sm rounded-full text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50 bg-gradient-to-r from-red-600 to-red-500 text-white hover:from-red-700 hover:to-red-600">
-                                YouTube
-                              </span>
-                            <% elsif knowledge.content_type == 'thread' %>
-                              <span class="content-type-badge inline-flex items-center justify-center h-8 px-4 backdrop-blur-sm rounded-full text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50 bg-gradient-to-r from-green-600 to-green-500 text-white hover:from-green-700 hover:to-green-600">
-                                Thread
-                              </span>
-                            <% else %>
-                              <span class="content-type-badge inline-flex items-center justify-center h-8 px-4 backdrop-blur-sm rounded-full text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50 bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600">
-                                Article
-                              </span>
-                            <% end %>
-                            <!-- Date -->
-                            <span class="text-xs text-gray-500">
-                              <% if knowledge.content_type == 'youtube' && knowledge.published_at.present? %>
-                                <%= time_ago_in_words(knowledge.published_at) %> ago published
-                              <% else %>
-                                <%= time_ago_in_words(knowledge.created_at) %> ago saved
-                              <% end %>
-                            </span>
-                          </div>
-                          
-                          <h3 class="text-white font-medium text-lg mb-2">
-                            <%= knowledge.title || "Processing..." %>
-                          </h3>
-                          
-                          <% if knowledge.summary.present? %>
-                            <p class="text-gray-400 text-sm mb-3 line-clamp-2">
-                              <%= knowledge.summary %>
-                            </p>
-                          <% end %>
-                          
-                          <% if knowledge.keywords.present? %>
-                            <div class="flex flex-wrap gap-2">
-                              <% JSON.parse(knowledge.keywords).first(5).each do |keyword| %>
-                                <span class="px-3 py-1 bg-purple-500/10 rounded-full text-xs text-white cursor-pointer hover:bg-purple-500/20 transition-all duration-200">
-                                  <%= keyword %>
-                                </span>
-                              <% end %>
-                            </div>
-                          <% end %>
-                        </div>
-                        
-                        <!-- Status/Action -->
-                        <div class="ml-4 flex-shrink-0">
-                          <% if knowledge.processing? %>
-                            <div class="animate-spin h-5 w-5 border-2 border-purple-500 rounded-full border-t-transparent"></div>
-                          <% else %>
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                          <% end %>
-                        </div>
-                      </div>
-                      
-                    <% end %>
+              
+              <div>
+                <span class="text-gray-400 text-sm">플랜</span>
+                <p class="text-sm font-semibold mt-1 <%= @plan_type == 'free' ? 'text-gray-400' : 'text-purple-400' %>">
+                  <%= @plan_type.capitalize %> 플랜
+                </p>
+              </div>
+              
+              <div>
+                <span class="text-gray-400 text-sm">인증 상태</span>
+                <p class="text-sm mt-1">
+                  <% if @email_verified %>
+                    <span class="text-green-400">✓ 인증완료</span>
+                  <% else %>
+                    <span class="text-yellow-400">⚠ 미인증</span>
                   <% end %>
-                <% end %>
-              <% else %>
-                <div class="bg-gray-900/30 backdrop-blur-sm border border-gray-800 rounded-xl p-12 text-center">
-                  <div class="text-6xl mb-4">📚</div>
-                  <h3 class="text-xl font-semibold text-white mb-2">No saved knowledge yet</h3>
-                  <p class="text-gray-400 mb-6">Enter a URL to save your first knowledge</p>
-                  <%= link_to "Save Knowledge", root_path, class: "inline-block px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium" %>
-                </div>
-              <% end %>
-            </div>
-            
-            <!-- Pagination -->
-            <% if @recent_knowledges.any? && @total_knowledges > 10 %>
-              <div class="flex justify-center gap-2 mt-8">
-                <button class="inline-flex items-center justify-center h-9 px-4 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                  Previous
-                </button>
-                <button class="inline-flex items-center justify-center h-9 px-4 bg-purple-900/50 border border-purple-500/50 rounded-md text-sm font-medium text-purple-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50">
-                  1
-                </button>
-                <button class="inline-flex items-center justify-center h-9 px-4 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                  2
-                </button>
-                <button class="inline-flex items-center justify-center h-9 px-4 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                  3
-                </button>
-                <button class="inline-flex items-center justify-center h-9 px-4 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-md text-sm font-medium text-gray-400 hover:text-white hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/50">
-                  Next
-                </button>
+                </p>
               </div>
-            <% end %>
+              
+              <div class="border-t border-gray-800 pt-4">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-gray-400 text-sm">크레딧</span>
+                  <span class="text-lg font-bold <%= @credits_remaining > 20 ? 'text-green-400' : 'text-yellow-400' %>">
+                    <%= @credits_remaining %> / <%= @user_setting.monthly_credit_limit %>
+                  </span>
+                </div>
+                
+                <div class="w-full bg-gray-800 rounded-full h-2">
+                  <div class="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-300" 
+                       style="width: <%= (@user_setting.used_credits.to_f / @user_setting.monthly_credit_limit * 100).round %>%"></div>
+                </div>
+              </div>
+              
+              <% if @plan_type == 'free' %>
+                <%= link_to "Pro 업그레이드", new_payment_path(plan: 'pro'), 
+                    class: "w-full block text-center px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-200 text-sm font-semibold mt-4" %>
+              <% end %>
+              
+              <%= link_to "설정 관리", user_settings_path, 
+                  class: "w-full block text-center px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-200 text-sm text-gray-300 mt-2" %>
+            </div>
+          </div>
+          
+          <!-- 검색 Section -->
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6">
+            <h2 class="text-lg font-semibold text-white mb-4">검색</h2>
             
+            <div class="space-y-4">
+              <input type="text" 
+                     id="search-input"
+                     placeholder="검색어 입력..." 
+                     class="w-full px-4 py-2 text-sm bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition-colors">
+              
+              <!-- Type Filters -->
+              <div class="space-y-2">
+                <p class="text-xs text-gray-400">콘텐츠 유형</p>
+                <div class="flex flex-wrap gap-2" id="content-type-buttons">
+                  <button data-type="all" class="content-type-btn px-3 py-1 bg-purple-600 text-white rounded-md text-xs font-medium transition-colors">
+                    전체
+                  </button>
+                  <button data-type="youtube" class="content-type-btn px-3 py-1 bg-gray-800 text-gray-400 hover:text-white rounded-md text-xs font-medium transition-colors">
+                    YouTube
+                  </button>
+                  <button data-type="article" class="content-type-btn px-3 py-1 bg-gray-800 text-gray-400 hover:text-white rounded-md text-xs font-medium transition-colors">
+                    기사
+                  </button>
+                </div>
+              </div>
+              
+              <button class="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg text-sm font-medium hover:from-purple-700 hover:to-blue-700 transition duration-200">
+                검색하기
+              </button>
+            </div>
           </div>
           
         </div>
         
-      <% else %>
-        <!-- Not Logged In Redirect -->
-        <script>
-          window.location.href = '<%= new_user_session_path %>';
-        </script>
-      <% end %>
-      
-    </div>
+        <!-- Right Content - 75% -->
+        <div class="w-3/4">
+          <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-6 h-full overflow-auto">
+            
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+              <h1 class="text-2xl font-bold text-white">저장된 지식</h1>
+              <div class="flex gap-2">
+                <button class="px-3 py-1 bg-purple-600 text-white rounded-md text-sm font-medium transition-colors">
+                  최신순
+                </button>
+                <button class="px-3 py-1 bg-gray-800 text-gray-400 hover:text-white rounded-md text-sm font-medium transition-colors">
+                  오래된순
+                </button>
+              </div>
+            </div>
+            
+            <!-- Knowledge List -->
+            <div class="space-y-4">
+              <% if @recent_knowledges.any? %>
+                <% @recent_knowledges.each do |knowledge| %>
+                  <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-purple-500/50 transition-colors">
+                    
+                    <div class="flex justify-between items-start">
+                      <!-- Content -->
+                      <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-2">
+                          <!-- Type Badge -->
+                          <% if knowledge.content_type == 'youtube' %>
+                            <span class="px-2 py-1 bg-red-600/20 border border-red-600/50 text-red-400 rounded text-xs font-medium">
+                              YouTube
+                            </span>
+                          <% else %>
+                            <span class="px-2 py-1 bg-blue-600/20 border border-blue-600/50 text-blue-400 rounded text-xs font-medium">
+                              기사
+                            </span>
+                          <% end %>
+                          
+                          <!-- Date -->
+                          <span class="text-xs text-gray-500">
+                            <%= time_ago_in_words(knowledge.created_at) %> 전
+                          </span>
+                        </div>
+                        
+                        <h3 class="text-white font-medium text-base mb-2">
+                          <%= link_to (h(knowledge.title) || "처리 중..."), knowledge_path(knowledge), 
+                              class: "hover:text-purple-400 transition-colors", 
+                              data: { turbo_frame: "_top" } %>
+                        </h3>
+                        
+                        <% if knowledge.summary.present? %>
+                          <p class="text-gray-400 text-sm mb-3 line-clamp-2">
+                            <%= h(knowledge.summary) %>
+                          </p>
+                        <% end %>
+                        
+                        <% if knowledge.keywords.present? %>
+                          <div class="flex flex-wrap gap-2">
+                            <% JSON.parse(knowledge.keywords).first(3).each do |keyword| %>
+                              <span class="px-2 py-1 bg-purple-500/10 rounded text-xs text-purple-400">
+                                #<%= h(keyword) %>
+                              </span>
+                            <% end %>
+                          </div>
+                        <% end %>
+                      </div>
+                      
+                      <!-- Actions -->
+                      <div class="flex gap-2 ml-4">
+                        <%= link_to knowledge_path(knowledge), 
+                            class: "p-2 text-gray-400 hover:text-white transition-colors",
+                            data: { turbo_frame: "_top" } do %>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                          </svg>
+                        <% end %>
+                        
+                        <%= button_to knowledge_path(knowledge), 
+                            method: :delete,
+                            data: { 
+                              turbo_method: :delete,
+                              turbo_confirm: "정말로 삭제하시겠습니까?"
+                            },
+                            class: "p-2 text-gray-400 hover:text-red-400 transition-colors" do %>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                          </svg>
+                        <% end %>
+                      </div>
+                    </div>
+                    
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="text-center py-12">
+                  <div class="text-6xl mb-4">📚</div>
+                  <h3 class="text-xl font-semibold text-white mb-2">아직 저장된 지식이 없습니다</h3>
+                  <p class="text-gray-400 mb-6">첫 번째 지식을 저장하려면 URL을 입력하세요</p>
+                  <%= link_to "지식 저장하기", root_path, class: "inline-block px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium" %>
+                </div>
+              <% end %>
+            </div>
+            
+          </div>
+        </div>
+        
+      </div>
+    <% else %>
+      <!-- Not Logged In Redirect -->
+      <script>
+        window.location.href = '<%= new_user_session_path %>';
+      </script>
+    <% end %>
   </div>
   
-  <!-- JavaScript for interactive content type buttons -->
+  <!-- JavaScript for content type filters -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const contentTypeButtons = document.querySelectorAll('.content-type-btn');
@@ -302,15 +316,14 @@
         button.addEventListener('click', function() {
           // Remove active state from all buttons
           contentTypeButtons.forEach(btn => {
-            btn.classList.remove('bg-gradient-to-r', 'from-purple-600', 'to-blue-600', 'text-white', 'hover:from-purple-700', 'hover:to-blue-700');
-            btn.classList.add('bg-gray-800/50', 'border', 'border-gray-700', 'text-gray-400', 'hover:bg-gray-800/70', 'hover:text-white', 'hover:border-gray-600');
+            btn.classList.remove('bg-purple-600', 'text-white');
+            btn.classList.add('bg-gray-800', 'text-gray-400');
           });
           
           // Add active state to clicked button
-          this.classList.remove('bg-gray-800/50', 'border', 'border-gray-700', 'text-gray-400', 'hover:bg-gray-800/70', 'hover:text-white', 'hover:border-gray-600');
-          this.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-blue-600', 'text-white', 'hover:from-purple-700', 'hover:to-blue-700');
+          this.classList.remove('bg-gray-800', 'text-gray-400');
+          this.classList.add('bg-purple-600', 'text-white');
           
-          // You can add filtering logic here based on the data-type attribute
           const selectedType = this.getAttribute('data-type');
           console.log('Selected content type:', selectedType);
         });

@@ -2,6 +2,16 @@ class KnowledgesController < ApplicationController
   before_action :authenticate_user!
   
   def create
+    Rails.logger.info "=== KnowledgesController#create called ==="
+    Rails.logger.info "Params: #{params.inspect}"
+    Rails.logger.info "Current user: #{current_user.id} - #{current_user.email}"
+    
+    # 크레딧 사용 가능 여부 체크
+    unless current_user.can_use_credit?
+      redirect_to root_path, alert: "이번 달 크레딧을 모두 사용하셨습니다. 다음 달에 다시 이용해주세요."
+      return
+    end
+    
     # 기존 URL 체크
     existing_knowledge = current_user.knowledges.find_by(original_url: params[:url])
     
@@ -16,7 +26,8 @@ class KnowledgesController < ApplicationController
         redirect_to root_path, alert: "해당 URL은 현재 처리 중입니다."
         return
       elsif existing_knowledge.status == "failed"
-        # 실패한 경우 재시도
+        # 실패한 경우 재시도 (크레딧 차감)
+        current_user.use_credit!
         existing_knowledge.update(status: "processing")
         UrlProcessorJob.perform_later(existing_knowledge)
         redirect_to root_path, notice: "처리를 재시도합니다."
@@ -29,37 +40,28 @@ class KnowledgesController < ApplicationController
       status: "processing"
     )
     
+    Rails.logger.info "Building knowledge: #{@knowledge.inspect}"
+    
     if @knowledge.save
+      Rails.logger.info "Knowledge saved successfully with ID: #{@knowledge.id}"
+      
+      # 크레딧 차감
+      current_user.use_credit!
+      
       UrlProcessorJob.perform_later(@knowledge)
       
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.prepend("recent-knowledges", 
-              partial: "knowledges/card", 
-              locals: { knowledge: @knowledge }),
-            turbo_stream.replace("processing-status",
-              partial: "shared/processing_alert")
-          ]
-        end
-        format.html { redirect_to root_path }
-      end
+      # Always redirect to dashboard after save
+      redirect_to dashboard_path, notice: "지식이 저장되었습니다. 처리 중입니다..."
     else
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "form-errors",
-            partial: "shared/errors",
-            locals: { errors: @knowledge.errors.full_messages }
-          )
-        end
-        format.html { redirect_to root_path, alert: "エラーが発生しました" }
-      end
+      Rails.logger.error "Failed to save knowledge: #{@knowledge.errors.full_messages.join(', ')}"
+      redirect_to root_path, alert: @knowledge.errors.full_messages.join(", ")
     end
   end
 
   def show
     @knowledge = current_user.knowledges.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to dashboard_path, alert: "요청하신 항목을 찾을 수 없습니다."
   end
   
   def retry
@@ -72,5 +74,13 @@ class KnowledgesController < ApplicationController
     else
       redirect_to knowledge_path(@knowledge), alert: "재시도할 수 없는 상태입니다."
     end
+  end
+  
+  def destroy
+    @knowledge = current_user.knowledges.find(params[:id])
+    @knowledge.destroy
+    redirect_to dashboard_path, notice: "항목이 삭제되었습니다."
+  rescue ActiveRecord::RecordNotFound
+    redirect_to dashboard_path, alert: "삭제할 항목을 찾을 수 없습니다."
   end
 end

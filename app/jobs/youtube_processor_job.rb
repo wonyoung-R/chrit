@@ -1,10 +1,14 @@
 require 'concurrent'
+require_relative 'content_validator'
+require_relative 'processing_logger'
 
 class YoutubeProcessorJob < ApplicationJob
+  include ContentValidator
+  include ProcessingLogger
   queue_as :default
   
-  # 재시도 설정
-  retry_on StandardError, wait: :exponentially_longer, attempts: 3 do |job, error|
+  # 재시도 설정 - 5초, 25초, 125초 간격으로 재시도
+  retry_on StandardError, wait: 5.seconds, attempts: 3 do |job, error|
     knowledge = job.arguments.first
     knowledge.update(
       status: "failed",
@@ -28,20 +32,31 @@ class YoutubeProcessorJob < ApplicationJob
     
     Rails.logger.info "Fetched YouTube metadata for video: #{video_data[:title]}"
     
-    # Step 2: 자막/트랜스크립트 가져오기 (Gemini 사용하지 않음)
-    transcript = fetch_transcript_improved(video_data[:video_id])
+    # Step 2: Gemini API로 직접 비디오 분석 (자막 가져오기 생략)
+    Rails.logger.info "Analyzing YouTube video directly with Gemini API"
+    analysis_result = analyze_with_gemini_directly(knowledge.original_url, video_data)
     
-    # Step 3: 콘텐츠 분석 (Gemini 또는 Anthropic)
-    analysis_result = if transcript.present? && transcript.length > 100
-      Rails.logger.info "Analyzing transcript (#{transcript.length} characters)"
-      analyze_with_ai(transcript, video_data)
+    # Gemini 직접 분석이 실패한 경우에만 자막을 시도
+    if analysis_result.nil? || analysis_result[:summary].nil?
+      Rails.logger.info "Gemini direct analysis failed, trying to fetch transcript"
+      transcript = fetch_transcript_improved(video_data[:video_id])
+      
+      # 자막이 있으면 자막으로 분석, 없으면 메타데이터로 분석
+      if transcript.present? && transcript.length > 100
+        Rails.logger.info "Analyzing transcript (#{transcript.length} characters)"
+        analysis_result = analyze_with_ai(transcript, video_data)
+      else
+        Rails.logger.info "Using fallback content for analysis"
+        fallback_content = build_fallback_content(video_data)
+        analysis_result = analyze_with_ai(fallback_content, video_data)
+      end
     else
-      Rails.logger.info "Using fallback content for analysis"
-      fallback_content = build_fallback_content(video_data)
-      analyze_with_ai(fallback_content, video_data)
+      # Gemini 직접 분석 성공 시 transcript는 nil로 설정
+      transcript = nil
+      Rails.logger.info "Successfully analyzed video directly with Gemini API"
     end
     
-    # Step 4: 결과 저장
+    # Step 3: 결과 저장
     save_knowledge(knowledge, video_data, transcript, analysis_result)
     
     Rails.logger.info "Successfully processed knowledge ##{knowledge.id} in #{processing_time(knowledge)} seconds"
@@ -94,6 +109,46 @@ class YoutubeProcessorJob < ApplicationJob
     nil
   end
   
+  # Gemini API로 직접 YouTube 비디오 분석 (자막 없이)
+  def analyze_with_gemini_directly(video_url, video_data)
+    begin
+      gemini_service = GeminiService.new
+      
+      # Gemini의 직접 분석 메서드 호출
+      result = gemini_service.analyze_youtube_directly(
+        video_url,
+        {
+          title: video_data[:title],
+          channel: video_data[:channel],
+          duration: video_data[:duration],
+          description: video_data[:description],
+          tags: video_data[:tags],
+          view_count: video_data[:view_count],
+          like_count: video_data[:like_count],
+          published_at: video_data[:published_at]
+        }
+      )
+      
+      if result
+        Rails.logger.info "Video analyzed directly with Gemini successfully"
+        return {
+          summary: result[:summary],
+          keywords: result[:keywords],
+          main_points: result[:main_points],
+          content: result[:content] || "Gemini API로 직접 분석된 YouTube 비디오입니다.",
+          target_audience: result[:target_audience],
+          ai_service: 'gemini_direct',
+          input_tokens: result[:input_tokens],
+          output_tokens: result[:output_tokens]
+        }
+      end
+    rescue => e
+      Rails.logger.warn "Gemini direct analysis failed: #{e.message}"
+    end
+    
+    nil
+  end
+  
   # AI로 콘텐츠 분석 (Gemini 우선, Anthropic 폴백)
   def analyze_with_ai(content, video_data)
     # Gemini로 먼저 시도
@@ -119,7 +174,9 @@ class YoutubeProcessorJob < ApplicationJob
           main_points: result[:main_points],
           content: result[:content],
           target_audience: result[:target_audience],
-          ai_service: 'gemini'
+          ai_service: 'gemini',
+          input_tokens: result[:input_tokens],
+          output_tokens: result[:output_tokens]
         }
       end
     rescue => e
@@ -167,8 +224,17 @@ class YoutubeProcessorJob < ApplicationJob
       published_at: video_data[:published_at],
       status: "completed",
       completed_at: Time.current,
-      error_message: nil
+      error_message: nil,
+      # 토큰 정보 저장
+      input_tokens: analysis_result[:input_tokens] || 0,
+      output_tokens: analysis_result[:output_tokens] || 0
     )
+    
+    # 크레딧 계산 및 차감
+    if knowledge.user
+      credits_used = knowledge.user.use_credit!(knowledge)
+      Rails.logger.info "YouTube processing used #{credits_used} credits (#{knowledge.input_tokens} input, #{knowledge.output_tokens} output tokens)"
+    end
   end
   
   def build_fallback_content(video_data)

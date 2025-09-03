@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+<div class="min-h-screen bg-black text-white flex flex-col relative overflow-hidden" data-turbo-permanent>
   
   <!-- 배경 애니메이션 효과 -->
   <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20"></div>
@@ -7,32 +7,27 @@
     <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
   </div>
   
-  <!-- 상단 네비게이션 -->
+  <!-- Navigation Bar -->
   <nav class="relative z-10 flex justify-between items-center p-8">
     <%= link_to root_path, class: "text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent" do %>
       Chrit
     <% end %>
-    <div>
-      <% if user_signed_in? %>
-        <div class="flex items-center gap-6">
-          <%= link_to "Pricing", pricing_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
-          <%= link_to dashboard_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" do %>
-            <%= current_user.email %>
-          <% end %>
-          <%= link_to "Sign out", destroy_user_session_path,
-              class: "text-sm text-gray-400 hover:text-white transition duration-200",
-              data: { turbo_method: :delete } %>
-        </div>
-      <% else %>
-        <div class="flex gap-4">
-          <%= link_to "Pricing", pricing_path, class: "px-4 py-2 text-sm text-gray-400 hover:text-white transition duration-200" %>
-          <%= link_to "Sign in", new_user_session_path,
-              class: "px-4 py-2 text-sm text-white hover:text-gray-300 transition duration-200" %>
-          <%= link_to "Get Started", new_user_registration_path,
-              class: "px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-200" %>
-        </div>
-      <% end %>
-    </div>
+    <% if user_signed_in? %>
+      <div class="flex items-center gap-6">
+        <%= link_to "대시보드", dashboard_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+        <%= link_to "가격", pricing_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+        <% if current_user.admin? %>
+          <%= link_to "관리자", admin_dashboard_path, class: "text-sm text-purple-400 hover:text-purple-300 transition duration-200" %>
+        <% end %>
+        <%= link_to "로그아웃", destroy_user_session_path, class: "px-4 py-2 text-sm bg-gray-800 rounded-lg hover:bg-gray-700 transition duration-200", data: { turbo_method: :delete } %>
+      </div>
+    <% else %>
+      <div class="flex items-center gap-4">
+        <%= link_to "가격", pricing_path, class: "text-sm text-gray-400 hover:text-white transition duration-200" %>
+        <%= link_to "로그인", new_user_session_path, class: "px-4 py-2 text-sm text-white hover:text-gray-300 transition duration-200" %>
+        <%= link_to "시작하기", new_user_registration_path, class: "px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition duration-200" %>
+      </div>
+    <% end %>
   </nav>
   
   <!-- 메인 콘텐츠 -->
@@ -42,9 +37,9 @@
       <!-- 메인 타이틀 -->
       <div class="text-center mb-16">
         <h1 class="text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent animate-gradient">
-          The Easiest Way<br />to Save Knowledge
+          지식을 저장하는<br />가장 쉬운 방법
         </h1>
-        <p class="text-xl text-gray-400">Paste a URL and AI will automatically summarize it for you</p>
+        <p class="text-xl text-gray-400">URL을 붙여넣으면 AI가 자동으로 요약해드립니다</p>
       </div>
       
       <% if user_signed_in? %>
@@ -60,7 +55,7 @@
           <div class="relative group">
             <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition duration-300"></div>
             <%= f.text_field :url,
-                placeholder: "Paste a YouTube or web article URL",
+                placeholder: "YouTube 또는 웹 기사 URL을 붙여넣으세요",
                 class: "relative w-full px-8 py-6 text-lg bg-gray-900/90 backdrop-blur-sm border border-gray-800 rounded-2xl
                         text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/50
                         transition-all duration-300",
@@ -71,7 +66,7 @@
                 autocomplete: "off",
                 autofocus: true %>
             <div class="absolute right-3 top-1/2 -translate-y-1/2">
-              <%= f.submit "Save",
+              <%= f.submit "저장",
                   class: "px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl
                           hover:from-purple-700 hover:to-blue-700 transition duration-200 cursor-pointer font-medium",
                   data: { url_input_target: "submitButton" } %>
@@ -88,13 +83,13 @@
         <!-- 로그인 안 한 경우 -->
         <div class="text-center">
           <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-12 mb-8">
-            <h2 class="text-3xl font-bold mb-4">A New Experience in Knowledge Management</h2>
-            <p class="text-gray-400 mb-8">Just enter a URL and AI will automatically organize and summarize it</p>
+            <h2 class="text-3xl font-bold mb-4">지식 관리의 새로운 경험</h2>
+            <p class="text-gray-400 mb-8">URL만 입력하면 AI가 자동으로 정리하고 요약해드립니다</p>
             <div class="flex gap-4 justify-center">
-              <%= link_to "Start for Free", new_user_registration_path,
+              <%= link_to "무료로 시작하기", new_user_registration_path,
                   class: "px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl
                           hover:from-purple-700 hover:to-blue-700 transition duration-200 font-medium" %>
-              <%= link_to "Sign In", new_user_session_path,
+              <%= link_to "로그인", new_user_session_path,
                   class: "px-8 py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition duration-200" %>
             </div>
           </div>

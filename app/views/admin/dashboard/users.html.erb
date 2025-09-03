@@ -1,0 +1,88 @@
+<div class="min-h-screen bg-gray-950 text-white">
+  <%= render 'shared/admin_navbar' %>
+
+  <!-- Main Content -->
+  <div class="p-6">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold mb-2">사용자 관리</h2>
+      <p class="text-gray-400">전체 사용자를 조회하고 관리합니다.</p>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="mb-6 flex gap-4">
+      <%= form_with url: admin_users_path, method: :get, class: "flex gap-4" do |f| %>
+        <%= f.text_field :search, value: params[:search], placeholder: "이메일 검색...", 
+            class: "px-4 py-2 bg-gray-900 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500" %>
+        
+        <%= f.select :plan, options_for_select([['전체 플랜', ''], ['Free', 'free'], ['Pro', 'pro'], ['Business', 'business']], params[:plan]),
+            {}, class: "px-4 py-2 bg-gray-900 border border-gray-800 rounded-lg text-white focus:outline-none focus:border-purple-500" %>
+        
+        <%= f.submit "검색", class: "px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition cursor-pointer" %>
+      <% end %>
+    </div>
+
+    <!-- Users Table -->
+    <div class="rounded-lg border border-gray-700 bg-gray-900 overflow-hidden shadow-lg">
+      <table class="w-full">
+        <thead class="bg-gray-800 border-b border-gray-700">
+          <tr>
+            <th class="text-left px-6 py-3 text-sm font-medium text-gray-400">ID</th>
+            <th class="text-left px-6 py-3 text-sm font-medium text-gray-400">이메일</th>
+            <th class="text-left px-6 py-3 text-sm font-medium text-gray-400">플랜</th>
+            <th class="text-left px-6 py-3 text-sm font-medium text-gray-400">크레딧</th>
+            <th class="text-left px-6 py-3 text-sm font-medium text-gray-400">콘텐츠</th>
+            <th class="text-left px-6 py-3 text-sm font-medium text-gray-400">가입일</th>
+            <th class="text-left px-6 py-3 text-sm font-medium text-gray-400">관리자</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+          <% @users.each do |user| %>
+            <tr class="hover:bg-gray-900/50 transition">
+              <td class="px-6 py-4 text-sm"><%= user.id %></td>
+              <td class="px-6 py-4 text-sm font-medium">
+                <%= user.email %>
+                <% if user.user_setting&.email_verified %>
+                  <span class="ml-2 text-xs text-green-400">✓</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-sm">
+                <span class="px-2 py-1 text-xs rounded-full <%= user.user_setting&.plan_type == 'pro' ? 'bg-purple-900/50 text-purple-400' : user.user_setting&.plan_type == 'business' ? 'bg-blue-900/50 text-blue-400' : 'bg-gray-800 text-gray-400' %>">
+                  <%= user.user_setting&.plan_type&.capitalize || 'Free' %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-sm">
+                <% if user.user_setting %>
+                  <span class="<%= user.user_setting.used_credits > user.user_setting.monthly_credit_limit * 0.8 ? 'text-yellow-400' : 'text-gray-300' %>">
+                    <%= user.user_setting.used_credits %> / <%= user.user_setting.monthly_credit_limit %>
+                  </span>
+                <% else %>
+                  <span class="text-gray-500">-</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-400">
+                <%= user.knowledges.count %>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-400">
+                <%= user.created_at.strftime("%Y-%m-%d") %>
+              </td>
+              <td class="px-6 py-4 text-sm">
+                <% if user.admin? %>
+                  <span class="px-2 py-1 text-xs bg-purple-900/50 text-purple-400 rounded-full">Admin</span>
+                <% else %>
+                  <span class="text-gray-500">-</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <% if @users.respond_to?(:current_page) %>
+      <div class="mt-6 flex justify-center">
+        <%= paginate @users %>
+      </div>
+    <% end %>
+  </div>
+</div>

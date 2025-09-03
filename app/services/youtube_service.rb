@@ -69,12 +69,12 @@ class YoutubeService
     "자막 가져오기 중 오류가 발생했습니다: #{e.message}"
   end
   
-  private
-  
+  # Public methods for transcript fetching (used by YoutubeProcessorJob)
   def fetch_captions_via_api(video_id)
     begin
       # YouTube Data API v3로 캡션 목록 가져오기
-      captions = @youtube.list_captions('snippet', video_id: video_id)
+      # list_captions는 두 개의 파라미터 필요: part와 video_id
+      captions = @youtube.list_captions('snippet', video_id)
       
       if captions.items.any?
         # 한국어 자막 우선, 없으면 영어, 그것도 없으면 첫 번째 자막
@@ -184,6 +184,8 @@ class YoutubeService
     nil
   end
   
+  private
+  
   def extract_topics(topic_details)
     return [] unless topic_details&.topic_ids
     
@@ -208,7 +210,7 @@ class YoutubeService
   end
   
   def extract_video_id(url)
-    # URLからビデオIDを抽出
+    # URL에서 비디오 ID 추출
     if url.include?('youtube.com/watch?v=')
       url.split('v=')[1].split('&')[0]
     elsif url.include?('youtu.be/')
@@ -221,7 +223,7 @@ class YoutubeService
   end
   
   def parse_duration(duration_str)
-    # PT1H2M3S形式を秒に変換
+    # PT1H2M3S 형식을 초로 변환
     match = duration_str.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/)
     return 0 unless match
     

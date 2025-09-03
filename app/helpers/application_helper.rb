@@ -7,11 +7,11 @@ module ApplicationHelper
     seconds = seconds % 60
     
     if hours > 0
-      "#{hours}時間#{minutes}分"
+      "#{hours}시간 #{minutes}분"
     elsif minutes > 0
-      "#{minutes}分#{seconds}秒"
+      "#{minutes}분 #{seconds}초"
     else
-      "#{seconds}秒"
+      "#{seconds}초"
     end
   end
   
@@ -20,17 +20,17 @@ module ApplicationHelper
     
     case distance_in_minutes
     when 0..1
-      "1分"
+      "1분"
     when 2..59
-      "#{distance_in_minutes}分"
+      "#{distance_in_minutes}분"
     when 60..119
-      "1時間"
+      "1시간"
     when 120..1439
-      "#{(distance_in_minutes / 60).round}時間"
+      "#{(distance_in_minutes / 60).round}시간"
     when 1440..2879
-      "1日"
+      "1일"
     else
-      "#{(distance_in_minutes / 1440).round}日"
+      "#{(distance_in_minutes / 1440).round}일"
     end
   end
 end

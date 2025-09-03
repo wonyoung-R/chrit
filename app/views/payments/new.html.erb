@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-black text-white p-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8 text-center">플랜 업그레이드</h1>
+    
+    <div class="bg-gray-900 rounded-lg p-8 mb-8">
+      <h2 class="text-2xl font-semibold mb-4"><%= @plan_info[:name] %> 플랜</h2>
+      
+      <div class="space-y-4 mb-6">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span>월 <%= @plan_info[:credits] %> 크레딧</span>
+        </div>
+        
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span>YouTube 비디오 요약</span>
+        </div>
+        
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span>웹 문서 분석</span>
+        </div>
+        
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span>AI 기반 지능형 요약</span>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 pt-6">
+        <div class="flex justify-between items-center mb-6">
+          <span class="text-xl">결제 금액</span>
+          <span class="text-3xl font-bold">₩<%= number_with_delimiter(@plan_info[:price]) %></span>
+        </div>
+        
+        <button id="payment-button" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+                data-plan="<%= @plan %>"
+                data-amount="<%= @plan_info[:price] %>">
+          결제하기
+        </button>
+      </div>
+    </div>
+    
+    <div class="text-center">
+      <%= link_to "대시보드로 돌아가기", dashboard_path, class: "text-gray-400 hover:text-white transition" %>
+    </div>
+  </div>
+</div>
+
+<!-- 토스페이먼츠 SDK -->
+<script src="https://js.tosspayments.com/v1/payment"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 테스트 클라이언트 키 (실제 운영시 환경변수로 관리)
+  const clientKey = '<%= ENV["TOSS_CLIENT_KEY"] || "test_ck_test_client_key_placeholder" %>';
+  const tossPayments = TossPayments(clientKey);
+  
+  const paymentButton = document.getElementById('payment-button');
+  
+  paymentButton.addEventListener('click', async function() {
+    const plan = this.dataset.plan;
+    const amount = parseInt(this.dataset.amount);
+    
+    try {
+      // 서버에서 결제 정보 생성
+      const response = await fetch('/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ plan: plan })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // 토스 결제창 호출
+        await tossPayments.requestPayment('카드', {
+          amount: data.amount,
+          orderId: data.orderId,
+          orderName: data.orderName,
+          customerEmail: data.customerEmail,
+          customerName: data.customerName,
+          successUrl: data.successUrl,
+          failUrl: data.failUrl
+        });
+      } else {
+        alert(data.error || '결제 초기화에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('결제 처리 중 오류가 발생했습니다.');
+    }
+  });
+});
+</script>

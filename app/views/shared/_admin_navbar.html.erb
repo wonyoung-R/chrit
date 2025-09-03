@@ -1,0 +1,32 @@
+<!-- Navigation -->
+<nav class="relative z-10 flex justify-between items-center p-8 bg-gray-900 border-b border-gray-700">
+  <%= link_to root_path, class: "text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent" do %>
+    Chrit
+  <% end %>
+  <div>
+    <div class="flex gap-4">
+      <%= link_to "대시보드", dashboard_path, class: "px-4 py-2 text-sm text-gray-400 hover:text-white transition duration-200" %>
+      <%= link_to "가격", pricing_path, class: "px-4 py-2 text-sm text-gray-400 hover:text-white transition duration-200" %>
+      <%= link_to "관리자", admin_dashboard_path, class: "px-4 py-2 text-sm text-purple-400 hover:text-purple-300 transition duration-200" %>
+      <%= link_to "로그아웃", destroy_user_session_path, class: "px-4 py-2 text-sm text-gray-400 hover:text-white transition duration-200", data: { turbo_method: :delete } %>
+    </div>
+  </div>
+</nav>
+
+<!-- Admin Sub-Navigation -->
+<div class="bg-gray-900 border-b border-gray-700">
+  <div class="px-8 py-3">
+    <nav class="flex items-center gap-6 text-sm">
+      <%= link_to "📊 개요", admin_dashboard_path, 
+          class: "px-3 py-1.5 rounded-lg #{current_page?(admin_dashboard_path) ? 'bg-purple-600 text-white font-medium hover:bg-purple-700' : 'text-gray-300 hover:bg-gray-800 hover:text-white'} transition" %>
+      <%= link_to "👥 사용자", admin_users_path, 
+          class: "px-3 py-1.5 rounded-lg #{current_page?(admin_users_path) ? 'bg-purple-600 text-white font-medium hover:bg-purple-700' : 'text-gray-300 hover:bg-gray-800 hover:text-white'} transition" %>
+      <%= link_to "📄 콘텐츠", admin_knowledges_path, 
+          class: "px-3 py-1.5 rounded-lg #{current_page?(admin_knowledges_path) ? 'bg-purple-600 text-white font-medium hover:bg-purple-700' : 'text-gray-300 hover:bg-gray-800 hover:text-white'} transition" %>
+      <%= link_to "💳 구독", admin_subscriptions_path, 
+          class: "px-3 py-1.5 rounded-lg #{current_page?(admin_subscriptions_path) ? 'bg-purple-600 text-white font-medium hover:bg-purple-700' : 'text-gray-300 hover:bg-gray-800 hover:text-white'} transition" %>
+      <%= link_to "📈 분석", admin_analytics_path, 
+          class: "px-3 py-1.5 rounded-lg #{current_page?(admin_analytics_path) ? 'bg-purple-600 text-white font-medium hover:bg-purple-700' : 'text-gray-300 hover:bg-gray-800 hover:text-white'} transition" %>
+    </nav>
+  </div>
+</div>

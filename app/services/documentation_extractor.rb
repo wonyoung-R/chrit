@@ -140,7 +140,7 @@ class DocumentationExtractor
     end
     
     # 인라인 코드도 추출
-    inline_codes = doc.css('code:not(pre code)').map(&:text).map(&:strip).uniq
+    inline_codes = doc.css('code').select { |code| code.parent.name != 'pre' }.map(&:text).map(&:strip).uniq
     
     {
       blocks: examples,

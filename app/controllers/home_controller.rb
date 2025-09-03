@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
   def index
     if user_signed_in?
-      @recent_knowledges = current_user.knowledges.recent.limit(5)
+      redirect_to dashboard_path
     else
       @recent_knowledges = []
     end

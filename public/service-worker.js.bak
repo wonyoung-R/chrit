@@ -1,0 +1,68 @@
+// Service Worker for Chrit Application - Simplified Version
+const CACHE_NAME = 'chrit-cache-v2';
+const urlsToCache = [
+  '/',
+  '/dashboard',
+  '/pricing'
+];
+
+// Install event - cache resources
+self.addEventListener('install', event => {
+  console.log('Service Worker: Installing...');
+  self.skipWaiting(); // 즉시 활성화
+});
+
+// Activate event - clean up old caches
+self.addEventListener('activate', event => {
+  console.log('Service Worker: Activating...');
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Service Worker: Clearing old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      return self.clients.claim(); // 즉시 컨트롤 획득
+    })
+  );
+});
+
+// Fetch event - Network First strategy for now
+self.addEventListener('fetch', event => {
+  // POST, PUT, DELETE, PATCH 요청은 완전히 무시
+  if (event.request.method !== 'GET' && event.request.method !== 'HEAD') {
+    return;
+  }
+  
+  const url = new URL(event.request.url);
+  
+  // 외부 도메인 요청 무시
+  if (!url.href.startsWith(self.location.origin)) {
+    return;
+  }
+  
+  // 인증 관련 경로 무시
+  if (url.pathname.includes('/users') || 
+      url.pathname.includes('/api') ||
+      url.pathname.includes('/rails') ||
+      url.pathname.includes('/assets')) {
+    return;
+  }
+  
+  // 네트워크 우선 전략 (Network First)
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // 네트워크 요청 성공
+        return response;
+      })
+      .catch(() => {
+        // 네트워크 실패시 캐시에서 가져오기
+        return caches.match(event.request);
+      })
+  );
+});

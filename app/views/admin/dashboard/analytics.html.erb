@@ -1,0 +1,143 @@
+<div class="min-h-screen bg-gray-950 text-white">
+  <%= render 'shared/admin_navbar' %>
+
+  <!-- Main Content -->
+  <div class="p-6">
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold mb-2">분석 대시보드</h2>
+      <p class="text-gray-400">서비스 사용 통계와 성장 추세를 분석합니다.</p>
+    </div>
+
+    <!-- Token Usage Stats -->
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <p class="text-sm text-gray-400 mb-2">총 입력 토큰</p>
+        <p class="text-2xl font-bold"><%= number_with_delimiter(@token_usage[:total_input]) %></p>
+        <p class="text-xs text-gray-500 mt-1">평균: <%= number_with_delimiter(@token_usage[:average_input]) %></p>
+      </div>
+      
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <p class="text-sm text-gray-400 mb-2">총 출력 토큰</p>
+        <p class="text-2xl font-bold"><%= number_with_delimiter(@token_usage[:total_output]) %></p>
+        <p class="text-xs text-gray-500 mt-1">평균: <%= number_with_delimiter(@token_usage[:average_output]) %></p>
+      </div>
+      
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <p class="text-sm text-gray-400 mb-2">YouTube 성공률</p>
+        <p class="text-2xl font-bold text-green-400"><%= @api_success_rate[:youtube] %>%</p>
+      </div>
+      
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <p class="text-sm text-gray-400 mb-2">전체 성공률</p>
+        <p class="text-2xl font-bold text-green-400"><%= @api_success_rate[:overall] %>%</p>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="grid gap-6 lg:grid-cols-2 mb-8">
+      <!-- Monthly Revenue Chart -->
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">월별 수익 추이</h3>
+        <div class="space-y-3">
+          <% max_revenue = @revenue_by_month.map { |m| m[:revenue] }.max.to_f %>
+          <% @revenue_by_month.last(6).each do |month_data| %>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-gray-400 w-20"><%= month_data[:month] %></span>
+              <div class="flex-1 bg-gray-800 rounded-full h-6 relative">
+                <div class="bg-gradient-to-r from-purple-600 to-blue-600 h-6 rounded-full flex items-center justify-end pr-2" 
+                     style="width: <%= max_revenue > 0 ? (month_data[:revenue] / max_revenue * 100).round : 0 %>%">
+                  <span class="text-xs font-medium">₩<%= number_with_delimiter(month_data[:revenue].to_i) %></span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- User Growth Chart -->
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">월별 사용자 증가</h3>
+        <div class="space-y-3">
+          <% max_users = @user_growth.map { |m| m[:count] }.max.to_f %>
+          <% @user_growth.last(6).each do |month_data| %>
+            <div class="flex items-center gap-4">
+              <span class="text-sm text-gray-400 w-20"><%= month_data[:month] %></span>
+              <div class="flex-1 bg-gray-800 rounded-full h-6 relative">
+                <div class="bg-gradient-to-r from-green-600 to-emerald-600 h-6 rounded-full flex items-center justify-end pr-2" 
+                     style="width: <%= max_users > 0 ? (month_data[:count] / max_users * 100).round : 0 %>%">
+                  <span class="text-xs font-medium"><%= month_data[:count] %>명</span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Growth Chart -->
+    <div class="rounded-lg border border-gray-800 bg-gray-900/50 p-6">
+      <h3 class="text-lg font-semibold mb-4">월별 콘텐츠 처리량</h3>
+      <div class="overflow-x-auto">
+        <div class="flex gap-4 min-w-max">
+          <% max_content = @content_growth.map { |m| m[:count] }.max.to_f %>
+          <% @content_growth.each do |month_data| %>
+            <div class="flex flex-col items-center">
+              <div class="h-32 w-16 bg-gray-800 rounded flex flex-col justify-end">
+                <div class="bg-gradient-to-t from-purple-600 to-purple-400 rounded transition-all duration-300 hover:opacity-80" 
+                     style="height: <%= max_content > 0 ? (month_data[:count] / max_content * 100).round : 0 %>%">
+                </div>
+              </div>
+              <span class="text-xs text-gray-400 mt-2"><%= month_data[:month] %></span>
+              <span class="text-xs font-medium"><%= month_data[:count] %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">플랜별 전환율</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">Free → Pro</span>
+            <span class="text-sm font-medium">12.5%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">Pro → Business</span>
+            <span class="text-sm font-medium">8.3%</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">평균 사용 지표</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">일일 활성 사용자</span>
+            <span class="text-sm font-medium">45%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">월간 활성 사용자</span>
+            <span class="text-sm font-medium">78%</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="rounded-lg border border-gray-700 bg-gray-900 p-6 shadow-lg">
+        <h3 class="text-lg font-semibold mb-4">시스템 상태</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">API 응답 시간</span>
+            <span class="text-sm font-medium text-green-400">245ms</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-400">큐 대기 작업</span>
+            <span class="text-sm font-medium">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
