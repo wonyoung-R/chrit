@@ -1,0 +1,17 @@
+{
+  "name": "찌릿 - 한 판 미니게임 허브",
+  "short_name": "찌릿",
+  "description": "로그인 없이 바로 플레이하는 24가지 한 판 미니게임.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#13111c",
+  "theme_color": "#13111c",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

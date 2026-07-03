@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#13111c"/>
+      <stop offset=".45" stop-color="#162022"/>
+      <stop offset="1" stop-color="#24151b"/>
+    </linearGradient>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0v42" fill="none" stroke="#ffffff" stroke-opacity=".05"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <circle cx="1000" cy="120" r="160" fill="#39d6c9" opacity=".18"/>
+  <circle cx="190" cy="520" r="210" fill="#ff5a8a" opacity=".16"/>
+  <g transform="translate(105 94)">
+    <rect x="0" y="0" width="990" height="442" rx="30" fill="#ffffff" opacity=".06" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="76" y="134" font-family="Arial, sans-serif" font-size="86" font-weight="900" fill="#ffffff">찌릿</text>
+    <text x="80" y="206" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#ffd34d">24가지 한 판 미니게임</text>
+    <text x="80" y="282" font-family="Arial, sans-serif" font-size="34" fill="#d7f7f3">반응속도 · 광클 · 자유투 · 카드 짝맞추기</text>
+    <text x="80" y="338" font-family="Arial, sans-serif" font-size="28" fill="#f0ecff">결과 복사로 친구에게 바로 도전장을 보내세요.</text>
+    <g transform="translate(752 90)">
+      <rect width="150" height="150" rx="26" fill="#13111c" stroke="#ffd34d" stroke-width="8"/>
+      <path d="M35 106h27l-10 31 64-67H86l18-59-69 95Z" fill="#ffd34d"/>
+      <text x="75" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="900" fill="#ffffff">찌</text>
+    </g>
+  </g>
+</svg>
