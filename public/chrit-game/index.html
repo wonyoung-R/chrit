@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>찌릿 - 한 판 미니게임 허브</title>
+    <meta
+      name="description"
+      content="동료, 친구와 바로 겨루는 24가지 한 판 미니게임. 로그인 없이 기록하고, 결과를 복사해 공유하고, 스폰서 링크까지 자연스럽게 연결합니다."
+    />
+    <link rel="canonical" href="https://chrit.kr/" />
+    <meta name="theme-color" content="#13111c" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="찌릿" />
+    <meta property="og:title" content="찌릿 - 한 판 미니게임 허브" />
+    <meta
+      property="og:description"
+      content="반응속도, 광클, 자유투, 카드 짝맞추기까지. 한 판 하고 결과 복사해서 친구에게 바로 도전장을 보내세요."
+    />
+    <meta property="og:url" content="https://chrit.kr/" />
+    <meta property="og:image" content="https://chrit.kr/chrit-game/assets/og-chrit.svg" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="찌릿 - 한 판 미니게임 허브" />
+    <meta
+      name="twitter:description"
+      content="로그인 없이 바로 플레이하는 24가지 한 판 미니게임."
+    />
+    <meta name="twitter:image" content="https://chrit.kr/chrit-game/assets/og-chrit.svg" />
+
+    <link rel="icon" href="/chrit-game/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/chrit-game/manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/chrit-game/styles.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "찌릿",
+        "url": "https://chrit.kr/",
+        "description": "친구와 바로 겨루는 24가지 한 판 미니게임 허브",
+        "inLanguage": "ko-KR",
+        "potentialAction": {
+          "@type": "PlayAction",
+          "target": "https://chrit.kr/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="site-frame">
+      <header class="topbar" id="top">
+        <a class="brand" href="#/" aria-label="찌릿 홈">
+          <span class="brand-mark" aria-hidden="true">찌</span>
+          <span>
+            <strong>찌릿</strong>
+            <small>24가지 한 판 미니게임</small>
+          </span>
+        </a>
+        <nav class="topnav" aria-label="주요 메뉴">
+          <a href="#/" data-nav="home">게임</a>
+          <a href="#/sponsors" data-nav="sponsors">스폰서</a>
+          <a href="#/records" data-nav="records">기록</a>
+        </nav>
+      </header>
+
+      <main id="app" tabindex="-1"></main>
+
+      <footer class="footer">
+        <p>기록은 이 기기에만 저장됩니다. 서버, 로그인, 데이터베이스 없이 작동합니다.</p>
+        <a href="#top">맨 위로</a>
+      </footer>
+    </div>
+
+    <noscript>
+      <section class="noscript">
+        찌릿은 브라우저에서 바로 실행되는 미니게임입니다. JavaScript를 켜면 플레이할 수 있습니다.
+      </section>
+    </noscript>
+    <script src="/chrit-game/app.js" defer></script>
+  </body>
+</html>

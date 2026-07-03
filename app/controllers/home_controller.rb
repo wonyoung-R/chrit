@@ -1,9 +1,5 @@
 class HomeController < ApplicationController
   def index
-    if user_signed_in?
-      redirect_to dashboard_path
-    else
-      @recent_knowledges = []
-    end
+    render file: Rails.root.join("public", "chrit-game", "index.html"), layout: false
   end
 end
