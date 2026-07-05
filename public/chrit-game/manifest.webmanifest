@@ -8,7 +8,7 @@
   "theme_color": "#13111c",
   "icons": [
     {
-      "src": "/chrit-game/assets/favicon.svg",
+      "src": "assets/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
