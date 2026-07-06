@@ -945,6 +945,9 @@ function runColorTrap(game) {
     );
     byId("app").querySelectorAll("[data-color]").forEach((button) => {
       button.addEventListener("click", () => {
+        byId("app").querySelectorAll("[data-color]").forEach((item) => {
+          item.disabled = true;
+        });
         if (button.dataset.color === ink.name) score += 10;
         addTimeout(run, next, 120);
       });
@@ -1818,6 +1821,7 @@ function runCards(game) {
   let opened = [];
   let matched = 0;
   let tries = 0;
+  let locked = false;
   activeShell(
     game,
     `
@@ -1836,10 +1840,11 @@ function runCards(game) {
   const stat = byId("app").querySelectorAll(".stat-strip strong");
   byId("app").querySelectorAll("[data-card]").forEach((button) => {
     button.addEventListener("click", () => {
-      if (button.disabled || opened.includes(button)) return;
+      if (locked || button.disabled || opened.includes(button)) return;
       button.textContent = button.dataset.icon;
       opened.push(button);
       if (opened.length < 2) return;
+      locked = true;
       tries += 1;
       stat[0].textContent = `${tries}회`;
       const [a, b] = opened;
@@ -1851,6 +1856,7 @@ function runCards(game) {
         matched += 1;
         stat[1].textContent = `${matched}/4`;
         opened = [];
+        locked = false;
         if (matched === 4) finishGame(game, { value: tries });
         return;
       }
@@ -1858,6 +1864,7 @@ function runCards(game) {
         a.textContent = "?";
         b.textContent = "?";
         opened = [];
+        locked = false;
       }, 520);
     });
   });
@@ -1909,43 +1916,59 @@ function runOddColor(game) {
 function runSlot(game) {
   const run = createRun();
   const symbols = ["🍒", "⭐", "🔔", "7"];
-  const picks = [];
-  const reels = [0, 1, 2].map(() => symbols[randomInt(0, symbols.length - 1)]);
+  const reels = [0, 1, 2].map((_, i) => ({
+    index: randomInt(0, symbols.length - 1),
+    stopped: false,
+    speed: 105 + i * 35,
+  }));
+  const picks = Array.from({ length: reels.length });
   activeShell(
     game,
     `
       <h2 class="active-title">릴 멈추기</h2>
-      <p class="active-subtitle">돌아가는 릴을 차례대로 멈춰 같은 그림을 노리세요.</p>
+      <p class="active-subtitle">릴은 고정 순서로 돌고, 3개 일치 100점 · 2개 일치 50점 · 모두 다르면 0점입니다.</p>
       <div class="tile-grid" style="--cols:3;">
-        ${reels.map((symbol, i) => `<div class="tile-button slot-reel" data-reel="${i}">${symbol}</div>`).join("")}
+        ${reels.map((reel, i) => `<div class="tile-button slot-reel" data-reel="${i}">${symbols[reel.index]}</div>`).join("")}
       </div>
       <button class="primary-action" type="button" data-stop-reel>STOP</button>
     `,
     statStrip([
       { label: "멈춘 릴", value: "0/3" },
-      { label: "보너스", value: "같은 그림" },
-      { label: "타이밍", value: "진행" },
+      { label: "점수표", value: "3=100" },
+      { label: "2개 일치", value: "50점" },
     ]),
   );
   const reelEls = byId("app").querySelectorAll("[data-reel]");
-  const stat = byId("app").querySelector(".stat-strip strong");
-  addInterval(run, () => {
-    reels.forEach((_, i) => {
-      if (picks[i]) return;
-      reels[i] = symbols[randomInt(0, symbols.length - 1)];
-      reelEls[i].textContent = reels[i];
-    });
-  }, 90);
-  byId("app").querySelector("[data-stop-reel]").addEventListener("click", () => {
-    const index = picks.length;
-    picks.push(reels[index]);
+  const stoppedStat = byId("app").querySelector(".stat-strip strong");
+  reels.forEach((reel, i) => {
+    addInterval(run, () => {
+      if (reel.stopped) return;
+      reel.index = (reel.index + 1) % symbols.length;
+      reelEls[i].textContent = symbols[reel.index];
+    }, reel.speed);
+  });
+  const stopButton = byId("app").querySelector("[data-stop-reel]");
+  stopButton.addEventListener("click", () => {
+    const index = reels.findIndex((reel) => !reel.stopped);
+    if (index === -1) return;
+    reels[index].stopped = true;
+    picks[index] = symbols[reels[index].index];
     reelEls[index].classList.add("correct");
-    stat.textContent = `${picks.length}/3`;
-    if (picks.length >= 3) {
-      const unique = new Set(picks).size;
-      const score = unique === 1 ? 100 : unique === 2 ? 40 : 10;
-      finishGame(game, { value: score, message: `${picks.join(" ")} 조합입니다.` });
-    }
+    const stopped = reels.filter((reel) => reel.stopped).length;
+    stoppedStat.textContent = `${stopped}/3`;
+    if (stopped < reels.length) return;
+
+    stopButton.disabled = true;
+    const counts = picks.reduce((map, symbol) => map.set(symbol, (map.get(symbol) || 0) + 1), new Map());
+    const maxMatch = Math.max(...counts.values());
+    const score = maxMatch === 3 ? 100 : maxMatch === 2 ? 50 : 0;
+    const message =
+      maxMatch === 3
+        ? "3개가 모두 일치했습니다."
+        : maxMatch === 2
+          ? "2개가 일치했습니다."
+          : "일치한 그림이 없습니다.";
+    finishGame(game, { value: score, message: `${picks.join(" ")} 조합입니다. ${message}` });
   });
 }
 
