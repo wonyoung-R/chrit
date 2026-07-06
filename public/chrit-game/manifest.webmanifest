@@ -4,8 +4,8 @@
   "description": "로그인 없이 바로 플레이하는 24가지 한 판 미니게임.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#13111c",
-  "theme_color": "#13111c",
+  "background_color": "#3C1A47",
+  "theme_color": "#3C1A47",
   "icons": [
     {
       "src": "assets/favicon.svg",

@@ -1,19 +1,21 @@
 :root {
   color-scheme: dark;
-  --bg: #13111c;
-  --panel: #1c1a26;
-  --panel-2: #20252a;
-  --ink: #f7f2e8;
-  --muted: #b8b1c6;
-  --line: rgba(255, 255, 255, 0.14);
-  --accent: #ffd34d;
-  --cyan: #39d6c9;
-  --pink: #ff5a8a;
-  --green: #7ad66d;
-  --blue: #73a7ff;
-  --danger: #ff6b5f;
-  --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
-  --radius: 8px;
+  --bg: #3c1a47;
+  --panel: #2a1134;
+  --panel-2: #4a2058;
+  --ink: #f7ffe6;
+  --muted: #d8c8e2;
+  --line: rgba(182, 255, 0, 0.34);
+  --accent: #b6ff00;
+  --cyan: #42f4ff;
+  --pink: #ff4fab;
+  --green: #b6ff00;
+  --blue: #78a7ff;
+  --danger: #ff4f63;
+  --shadow: 8px 8px 0 rgba(13, 3, 18, 0.92);
+  --radius: 2px;
+  --pixel-border: 3px solid var(--accent);
+  --pixel-font: "Black Han Sans", "Gowun Dodum", system-ui, sans-serif;
 }
 
 * {
@@ -26,17 +28,29 @@ html {
 }
 
 body {
+  position: relative;
   min-height: 100%;
   margin: 0;
   background:
-    linear-gradient(135deg, rgba(57, 214, 201, 0.12), transparent 30%),
-    linear-gradient(315deg, rgba(255, 90, 138, 0.12), transparent 35%),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 5px),
+    linear-gradient(180deg, rgba(182, 255, 0, 0.08) 0 2px, transparent 2px 10px),
+    linear-gradient(90deg, rgba(182, 255, 0, 0.045) 0 2px, transparent 2px 18px),
+    linear-gradient(135deg, rgba(0, 0, 0, 0.22), transparent 42%),
     var(--bg);
   color: var(--ink);
   font-family: "Gowun Dodum", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
   overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 4px),
+    linear-gradient(180deg, rgba(60, 26, 71, 0), rgba(21, 6, 28, 0.42));
 }
 
 a {
@@ -54,6 +68,8 @@ button {
 }
 
 .site-frame {
+  position: relative;
+  z-index: 1;
   width: min(1160px, calc(100% - 32px));
   margin: 0 auto;
 }
@@ -67,8 +83,10 @@ button {
   justify-content: space-between;
   gap: 18px;
   padding: 14px 0;
-  background: rgba(19, 17, 28, 0.88);
-  backdrop-filter: blur(14px);
+  border-bottom: var(--pixel-border);
+  background: rgba(60, 26, 71, 0.94);
+  box-shadow: 0 5px 0 rgba(13, 3, 18, 0.74);
+  backdrop-filter: blur(6px);
 }
 
 .brand {
@@ -83,13 +101,13 @@ button {
   width: 44px;
   height: 44px;
   place-items: center;
-  border: 2px solid var(--accent);
+  border: var(--pixel-border);
   border-radius: var(--radius);
-  background: linear-gradient(145deg, #251d2d, #142527);
-  color: #fff;
+  background: var(--accent);
+  color: var(--bg);
   font-family: "Black Han Sans", system-ui, sans-serif;
   font-size: 25px;
-  box-shadow: 4px 4px 0 rgba(57, 214, 201, 0.32);
+  box-shadow: 5px 5px 0 #130618;
 }
 
 .brand strong {
@@ -97,6 +115,8 @@ button {
   font-family: "Black Han Sans", system-ui, sans-serif;
   font-size: clamp(24px, 4vw, 36px);
   font-weight: 400;
+  color: var(--accent);
+  text-shadow: 3px 3px 0 #130618;
 }
 
 .brand small {
@@ -120,9 +140,9 @@ button {
 .ghost-action,
 .choice-button,
 .tile-button {
-  border: 1px solid var(--line);
+  border: 2px solid var(--line);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(25, 8, 33, 0.82);
   cursor: pointer;
   transition:
     transform 0.16s ease,
@@ -143,9 +163,10 @@ button {
 .ghost-action:hover,
 .choice-button:hover,
 .tile-button:hover {
-  border-color: rgba(255, 211, 77, 0.68);
-  background: rgba(255, 211, 77, 0.12);
+  border-color: var(--accent);
+  background: rgba(182, 255, 0, 0.12);
   color: var(--ink);
+  box-shadow: 4px 4px 0 #130618;
 }
 
 .hero {
@@ -163,6 +184,10 @@ button {
   font-size: clamp(48px, 9vw, 104px);
   font-weight: 400;
   line-height: 0.94;
+  color: var(--accent);
+  text-shadow:
+    5px 5px 0 #130618,
+    9px 9px 0 rgba(66, 244, 255, 0.35);
 }
 
 .hero-copy p {
@@ -182,12 +207,12 @@ button {
 .hero-board {
   position: relative;
   min-height: 330px;
-  border: 1px solid var(--line);
+  border: var(--pixel-border);
   border-radius: var(--radius);
   background:
-    radial-gradient(circle at 18% 22%, rgba(255, 211, 77, 0.28), transparent 28%),
-    radial-gradient(circle at 80% 24%, rgba(57, 214, 201, 0.22), transparent 30%),
-    linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    linear-gradient(0deg, rgba(182, 255, 0, 0.1) 0 2px, transparent 2px 18px),
+    linear-gradient(90deg, rgba(182, 255, 0, 0.08) 0 2px, transparent 2px 18px),
+    #250d2e;
   overflow: hidden;
   box-shadow: var(--shadow);
 }
@@ -208,13 +233,15 @@ button {
   inset: 28px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(10, 12, 18, 0.54);
+  border: 3px solid rgba(182, 255, 0, 0.78);
+  background:
+    repeating-linear-gradient(0deg, rgba(182, 255, 0, 0.07) 0 2px, transparent 2px 6px),
+    rgba(12, 3, 17, 0.88);
 }
 
 .hero-screen span {
   font-size: clamp(76px, 11vw, 130px);
-  filter: drop-shadow(7px 7px 0 rgba(255, 90, 138, 0.42));
+  filter: drop-shadow(7px 7px 0 rgba(182, 255, 0, 0.38));
 }
 
 .hero-chip {
@@ -222,11 +249,12 @@ button {
   right: 24px;
   bottom: 24px;
   padding: 10px 12px;
-  border: 1px solid rgba(255, 211, 77, 0.55);
+  border: 2px solid var(--accent);
   border-radius: var(--radius);
-  background: rgba(19, 17, 28, 0.82);
+  background: rgba(60, 26, 71, 0.92);
   color: var(--accent);
   font-size: 14px;
+  box-shadow: 4px 4px 0 #130618;
 }
 
 .section-head {
@@ -523,7 +551,7 @@ button {
   margin: 22px 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(90deg, #ff6b5f, #ffd34d 45%, #7ad66d 50%, #ffd34d 55%, #ff6b5f);
+  background: linear-gradient(90deg, #ff4f63, rgba(182, 255, 0, 0.48) 45%, #b6ff00 50%, rgba(182, 255, 0, 0.48) 55%, #ff4f63);
   overflow: hidden;
 }
 
@@ -893,6 +921,359 @@ button {
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
+}
+
+/* 8-bit arcade skin */
+.filter-button,
+.record-badge,
+.primary-action,
+.secondary-action,
+.ghost-action,
+.small-action,
+.choice-button,
+.tile-button,
+.game-card,
+.sponsor-card,
+.record-row,
+.game-panel,
+.result-panel,
+.sponsor-band,
+.stat-strip,
+.empty-state,
+.toast,
+.noscript {
+  border-radius: 0;
+}
+
+.topnav a,
+.filter-button,
+.primary-action,
+.secondary-action,
+.ghost-action,
+.small-action,
+.choice-button,
+.tile-button {
+  image-rendering: pixelated;
+  box-shadow: 3px 3px 0 #130618;
+  font-weight: 800;
+}
+
+.topnav a:active,
+.filter-button:active,
+.primary-action:active,
+.secondary-action:active,
+.ghost-action:active,
+.small-action:active,
+.choice-button:active,
+.tile-button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.filter-button {
+  border: 2px solid var(--line);
+  background: #250d2e;
+  color: var(--ink);
+}
+
+.filter-button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 4px 4px 0 #130618;
+}
+
+.game-card,
+.sponsor-card,
+.record-row,
+.game-panel,
+.result-panel,
+.sponsor-band,
+.stat-strip,
+.empty-state {
+  border: var(--pixel-border);
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 2px, transparent 2px 7px),
+    #2a1134;
+  box-shadow: var(--shadow);
+}
+
+.game-card,
+.sponsor-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card::before,
+.sponsor-card::after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 38px;
+  height: 38px;
+  border-right: 4px solid rgba(182, 255, 0, 0.42);
+  border-bottom: 4px solid rgba(182, 255, 0, 0.42);
+  pointer-events: none;
+}
+
+.game-card:hover,
+.sponsor-card:hover,
+.record-row:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 11px 11px 0 #130618;
+}
+
+.game-card[data-tone="cyan"],
+.game-card[data-tone="pink"],
+.game-card[data-tone="gold"],
+.game-card[data-tone="green"] {
+  border-top: var(--pixel-border);
+}
+
+.game-card strong,
+.sponsor-card strong,
+.record-row strong,
+.sponsor-band strong,
+.active-title,
+.intro-stack h1,
+.result-panel h1,
+.section-head h2,
+.result-score,
+.tap-count {
+  text-shadow: 3px 3px 0 #130618;
+}
+
+.game-icon {
+  width: fit-content;
+  padding: 4px 8px;
+  border: 2px solid rgba(182, 255, 0, 0.48);
+  background: rgba(19, 6, 24, 0.72);
+  box-shadow: 4px 4px 0 #130618;
+}
+
+.record-badge {
+  border: 2px solid var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 900;
+}
+
+.sponsor-card {
+  background:
+    repeating-linear-gradient(90deg, rgba(182, 255, 0, 0.08) 0 4px, transparent 4px 16px),
+    #351640;
+}
+
+.sponsor-card::before {
+  border: 2px solid var(--accent);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--accent);
+  font-weight: 900;
+}
+
+.sponsor-card em,
+.footer a {
+  color: var(--accent);
+}
+
+.primary-action {
+  border: 3px solid var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 5px 5px 0 #130618;
+}
+
+.primary-action:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 #130618;
+}
+
+.secondary-action,
+.ghost-action,
+.small-action {
+  border: 2px solid var(--accent);
+  background: #250d2e;
+  color: var(--accent);
+}
+
+.game-panel {
+  background:
+    linear-gradient(0deg, rgba(182, 255, 0, 0.08) 0 2px, transparent 2px 12px),
+    #2a1134;
+}
+
+.game-toolbar {
+  border-bottom: 3px solid var(--accent);
+  background: #1b0823;
+}
+
+.game-title {
+  color: var(--accent);
+  font-weight: 900;
+}
+
+.play-stage {
+  background:
+    linear-gradient(90deg, rgba(182, 255, 0, 0.045) 0 2px, transparent 2px 22px),
+    linear-gradient(0deg, rgba(182, 255, 0, 0.045) 0 2px, transparent 2px 22px);
+}
+
+.intro-icon {
+  filter: drop-shadow(7px 7px 0 #130618);
+}
+
+.active-title,
+.intro-stack h1,
+.result-panel h1,
+.section-head h2 {
+  color: var(--accent);
+}
+
+.meter {
+  height: 38px;
+  border: 3px solid #130618;
+  background:
+    linear-gradient(90deg, var(--danger), var(--accent) 43%, var(--accent) 57%, var(--danger)),
+    var(--bg);
+  box-shadow: 5px 5px 0 #130618;
+}
+
+.meter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 44%;
+  width: 12%;
+  border-right: 2px solid #130618;
+  border-left: 2px solid #130618;
+  background: rgba(182, 255, 0, 0.28);
+}
+
+.meter-needle {
+  z-index: 1;
+  background: #fff;
+  box-shadow: 4px 0 0 #130618;
+}
+
+.drag-arena,
+.ball-stage,
+.slice-arena,
+.big-hit-zone,
+.penalty-goal {
+  border: 3px solid var(--accent);
+  border-radius: 0;
+  background:
+    linear-gradient(0deg, rgba(182, 255, 0, 0.08) 0 2px, transparent 2px 18px),
+    linear-gradient(90deg, rgba(182, 255, 0, 0.08) 0 2px, transparent 2px 18px),
+    #210b29;
+  box-shadow: 5px 5px 0 #130618 inset;
+}
+
+.target-ring,
+.penalty-keeper,
+.slice-item,
+.drag-hint,
+.kick-zone {
+  border-radius: 0;
+}
+
+.target-ring,
+.penalty-keeper {
+  border-color: var(--accent);
+  background: rgba(182, 255, 0, 0.14);
+  color: var(--accent);
+}
+
+.drag-line,
+.slice-trail {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(19, 6, 24, 0.85);
+}
+
+.drag-dot {
+  border: 2px solid #130618;
+  border-radius: 0;
+  background: var(--accent);
+}
+
+.choice-button,
+.tile-button {
+  border: 3px solid rgba(182, 255, 0, 0.58);
+  background: #210b29;
+  color: var(--ink);
+}
+
+.choice-button:hover,
+.tile-button:hover {
+  border-color: var(--accent);
+  background: #34143e;
+}
+
+.tile-button {
+  min-height: 82px;
+}
+
+.tile-button.correct,
+.choice-button.correct {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.tile-button.wrong,
+.choice-button.wrong {
+  border-color: var(--danger);
+  background: rgba(255, 79, 99, 0.2);
+}
+
+.slot-reel {
+  border: 4px solid var(--accent);
+  background:
+    repeating-linear-gradient(0deg, rgba(182, 255, 0, 0.08) 0 3px, transparent 3px 9px),
+    #16061d;
+  box-shadow: 6px 6px 0 #130618 inset;
+}
+
+.stat-strip {
+  border: 3px solid var(--accent);
+  gap: 0;
+  background: var(--accent);
+}
+
+.stat-strip div {
+  border-right: 2px solid rgba(182, 255, 0, 0.36);
+  background: #1b0823;
+}
+
+.stat-strip div:last-child {
+  border-right: 0;
+}
+
+.stat-strip span {
+  color: var(--muted);
+}
+
+.stat-strip strong {
+  color: var(--accent);
+}
+
+.result-panel {
+  background:
+    linear-gradient(0deg, rgba(182, 255, 0, 0.08) 0 2px, transparent 2px 12px),
+    #210b29;
+}
+
+.result-score {
+  color: var(--accent);
+}
+
+.toast {
+  border: 3px solid var(--accent);
+  background: #1b0823;
+  box-shadow: var(--shadow);
 }
 
 @media (max-width: 920px) {
