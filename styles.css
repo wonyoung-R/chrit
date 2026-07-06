@@ -1604,6 +1604,370 @@ body::before {
   box-shadow: 4px 4px 0 #130618;
 }
 
+/* 8-bit coin-op cabinet pass */
+:root {
+  --coin-cream: #f4e7cf;
+  --coin-yellow: #d5eb55;
+  --coin-black: #130618;
+  --cabinet-purple: #24102c;
+}
+
+body {
+  background:
+    repeating-linear-gradient(0deg, rgba(19, 6, 24, 0.86) 0 4px, transparent 4px 16px),
+    repeating-linear-gradient(90deg, rgba(182, 255, 0, 0.035) 0 4px, transparent 4px 32px),
+    #3c1a47;
+}
+
+.topbar {
+  position: sticky;
+  min-height: 88px;
+  border: 4px solid var(--coin-black);
+  border-right-color: rgba(182, 255, 0, 0.78);
+  border-bottom: 6px solid var(--coin-black);
+  border-left-color: rgba(182, 255, 0, 0.78);
+  margin-top: 10px;
+  padding: 16px 14px 12px;
+  background:
+    repeating-linear-gradient(90deg, rgba(182, 255, 0, 0.11) 0 8px, transparent 8px 24px),
+    #32163b;
+  box-shadow:
+    0 8px 0 rgba(19, 6, 24, 0.92),
+    inset 0 -5px 0 rgba(0, 0, 0, 0.28);
+}
+
+.topbar::before {
+  content: "INSERT COIN";
+  position: absolute;
+  top: -13px;
+  left: 18px;
+  padding: 2px 8px;
+  border: 3px solid var(--coin-black);
+  background: var(--coin-yellow);
+  color: var(--bg);
+  font-family: "Black Han Sans", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1;
+  transform: rotate(-1deg);
+}
+
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--coin-black);
+  box-shadow:
+    4px 4px 0 var(--coin-black),
+    inset -4px -4px 0 rgba(60, 26, 71, 0.34);
+}
+
+.brand strong {
+  font-size: clamp(26px, 4vw, 40px);
+  letter-spacing: 0;
+}
+
+.topnav a,
+.filter-button,
+.primary-action,
+.secondary-action,
+.ghost-action,
+.small-action,
+.choice-button,
+.tile-button {
+  border: 4px solid var(--coin-black);
+  background: #2a1134;
+  color: var(--coin-yellow);
+  box-shadow:
+    4px 5px 0 var(--coin-black),
+    inset -4px -4px 0 rgba(0, 0, 0, 0.32),
+    inset 3px 3px 0 rgba(244, 231, 207, 0.12);
+}
+
+.topnav a[aria-current="page"],
+.topnav a:hover,
+.filter-button[aria-pressed="true"],
+.primary-action,
+.small-action:hover,
+.secondary-action:hover,
+.ghost-action:hover,
+.choice-button:hover,
+.tile-button:hover {
+  border-color: var(--coin-black);
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow:
+    4px 5px 0 var(--coin-black),
+    inset -4px -4px 0 rgba(60, 26, 71, 0.28),
+    inset 3px 3px 0 rgba(255, 255, 255, 0.24);
+}
+
+.topnav a:active,
+.filter-button:active,
+.primary-action:active,
+.secondary-action:active,
+.ghost-action:active,
+.small-action:active,
+.choice-button:active,
+.tile-button:active {
+  transform: translate(4px, 5px);
+  box-shadow:
+    inset -3px -3px 0 rgba(0, 0, 0, 0.28),
+    inset 3px 3px 0 rgba(255, 255, 255, 0.14);
+}
+
+.hero {
+  gap: 22px;
+  padding-top: 34px;
+}
+
+.hero-copy h1,
+.active-title,
+.intro-stack h1,
+.result-panel h1,
+.section-head h2,
+.tap-count {
+  color: var(--coin-cream);
+  text-shadow:
+    4px 0 0 var(--coin-black),
+    0 4px 0 var(--coin-black),
+    4px 4px 0 var(--coin-black),
+    6px 6px 0 rgba(182, 255, 0, 0.48);
+}
+
+.hero-copy p,
+.section-head p {
+  max-width: 620px;
+  border-left: 6px solid var(--accent);
+  padding-left: 12px;
+  color: var(--coin-cream);
+}
+
+.hero-board {
+  min-height: 350px;
+  border: 8px solid var(--coin-black);
+  background:
+    linear-gradient(90deg, transparent 0 18px, rgba(182, 255, 0, 0.16) 18px 22px, transparent 22px 42px),
+    #2b1234;
+  box-shadow:
+    10px 10px 0 var(--coin-black),
+    inset 0 0 0 4px rgba(182, 255, 0, 0.7),
+    inset -10px -10px 0 rgba(0, 0, 0, 0.32);
+}
+
+.hero-board::after {
+  content: "PLAYER SELECT";
+  position: absolute;
+  top: 12px;
+  left: 18px;
+  z-index: 2;
+  padding: 3px 8px;
+  border: 3px solid var(--coin-black);
+  background: var(--coin-yellow);
+  color: var(--bg);
+  font-family: "Black Han Sans", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.hero-screen {
+  inset: 46px 28px 28px;
+  border: 5px solid var(--coin-black);
+  background:
+    repeating-linear-gradient(0deg, rgba(182, 255, 0, 0.08) 0 2px, transparent 2px 8px),
+    repeating-linear-gradient(90deg, rgba(244, 231, 207, 0.035) 0 2px, transparent 2px 18px),
+    #180820;
+  box-shadow:
+    inset 8px 8px 0 rgba(0, 0, 0, 0.42),
+    inset -4px -4px 0 rgba(182, 255, 0, 0.14);
+}
+
+.filter-bar {
+  padding: 10px;
+  border: 4px solid var(--coin-black);
+  background:
+    repeating-linear-gradient(90deg, rgba(182, 255, 0, 0.08) 0 6px, transparent 6px 18px),
+    #24102c;
+  box-shadow: 5px 5px 0 var(--coin-black);
+}
+
+.game-grid {
+  counter-reset: stage-card;
+  gap: 18px;
+}
+
+.game-card {
+  counter-increment: stage-card;
+}
+
+.game-card,
+.sponsor-card,
+.record-row,
+.sponsor-band,
+.result-panel,
+.game-panel {
+  border: 5px solid var(--coin-black);
+  background:
+    repeating-linear-gradient(0deg, rgba(244, 231, 207, 0.035) 0 2px, transparent 2px 9px),
+    #24102c;
+  box-shadow:
+    7px 7px 0 var(--coin-black),
+    inset 0 0 0 2px rgba(182, 255, 0, 0.58);
+}
+
+.game-card[data-tone="cyan"],
+.game-card[data-tone="pink"],
+.game-card[data-tone="gold"],
+.game-card[data-tone="green"] {
+  border: 5px solid var(--coin-black);
+}
+
+.game-card::after {
+  content: "STAGE " counter(stage-card);
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  z-index: 1;
+  padding: 2px 7px;
+  border: 3px solid var(--coin-black);
+  background: var(--coin-yellow);
+  color: var(--bg);
+  font-family: "Black Han Sans", system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.game-card strong,
+.sponsor-card strong,
+.record-row strong,
+.sponsor-band strong {
+  color: var(--coin-cream);
+  text-shadow:
+    2px 2px 0 var(--coin-black),
+    3px 3px 0 rgba(182, 255, 0, 0.28);
+}
+
+.game-icon {
+  min-width: 54px;
+  min-height: 48px;
+  border: 4px solid var(--coin-black);
+  background:
+    repeating-linear-gradient(0deg, rgba(19, 6, 24, 0.16) 0 2px, transparent 2px 8px),
+    var(--coin-cream);
+  box-shadow:
+    4px 4px 0 var(--coin-black),
+    inset -4px -4px 0 rgba(60, 26, 71, 0.18);
+}
+
+.record-badge,
+.hero-chip {
+  border: 4px solid var(--coin-black);
+  background: var(--accent);
+  box-shadow:
+    4px 4px 0 var(--coin-black),
+    inset -3px -3px 0 rgba(60, 26, 71, 0.28);
+}
+
+.game-layout {
+  gap: 22px;
+}
+
+.game-panel {
+  border-width: 7px;
+  overflow: visible;
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 3px, transparent 3px 13px),
+    #24102c;
+  box-shadow:
+    10px 10px 0 var(--coin-black),
+    inset 0 0 0 3px rgba(182, 255, 0, 0.62);
+}
+
+.game-panel::before {
+  content: "8-BIT CABINET";
+  position: absolute;
+  top: -18px;
+  left: 18px;
+  z-index: 2;
+  padding: 3px 8px;
+  border: 4px solid var(--coin-black);
+  background: var(--coin-yellow);
+  color: var(--bg);
+  font-family: "Black Han Sans", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.game-toolbar {
+  border-bottom: 5px solid var(--coin-black);
+  background:
+    repeating-linear-gradient(90deg, rgba(182, 255, 0, 0.09) 0 6px, transparent 6px 18px),
+    #180820;
+}
+
+.play-stage {
+  border-top: 4px solid rgba(182, 255, 0, 0.72);
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 3px, transparent 3px 10px),
+    repeating-linear-gradient(90deg, rgba(182, 255, 0, 0.035) 0 3px, transparent 3px 26px),
+    #24102c;
+}
+
+.intro-stack,
+.result-panel,
+.active-stack {
+  position: relative;
+  isolation: isolate;
+}
+
+.intro-stack::before,
+.active-stack::before,
+.result-panel::before {
+  content: "READY?";
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  z-index: -1;
+  padding: 2px 8px;
+  border: 3px solid var(--coin-black);
+  background: rgba(182, 255, 0, 0.8);
+  color: var(--bg);
+  font-family: "Black Han Sans", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1;
+  transform: translateX(-50%) rotate(-1deg);
+}
+
+.choice-button,
+.tile-button {
+  border-width: 5px;
+  background:
+    repeating-linear-gradient(0deg, rgba(244, 231, 207, 0.035) 0 2px, transparent 2px 8px),
+    #1d0a25;
+}
+
+.tile-button {
+  min-height: 86px;
+  font-family: "Black Han Sans", "Gowun Dodum", system-ui, sans-serif;
+}
+
+.meter,
+.slot-reel,
+.drag-arena,
+.ball-stage,
+.slice-arena,
+.big-hit-zone,
+.penalty-goal {
+  border: 5px solid var(--coin-black);
+  box-shadow:
+    6px 6px 0 var(--coin-black),
+    inset 0 0 0 2px rgba(182, 255, 0, 0.52);
+}
+
+.footer {
+  border-top: 4px solid var(--coin-black);
+  margin-top: 18px;
+  color: var(--coin-cream);
+}
+
 @media (max-width: 920px) {
   .hero,
   .game-layout {
