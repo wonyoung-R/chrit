@@ -1287,6 +1287,29 @@ button {
 }
 
 /* B-grade cabinet retune */
+:root {
+  --panel: #24102c;
+  --panel-2: #32163b;
+  --ink: #efe5d6;
+  --muted: #c5accd;
+  --line: rgba(182, 255, 0, 0.26);
+  --shadow: 5px 5px 0 rgba(13, 3, 18, 0.96);
+  --pixel-border: 2px solid rgba(182, 255, 0, 0.82);
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 4%, rgba(182, 255, 0, 0.055), transparent 28%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, #3c1a47 0%, #2b1234 100%);
+}
+
+body::before {
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 13px),
+    linear-gradient(180deg, rgba(60, 26, 71, 0.08), rgba(13, 3, 18, 0.5));
+}
+
 .topbar {
   border-bottom: 2px solid rgba(182, 255, 0, 0.72);
   background: #32163b;
